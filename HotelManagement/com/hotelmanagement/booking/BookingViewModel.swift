@@ -1,5 +1,5 @@
 import Foundation
-class BookingViewModel
+class BookingViewModel : BookingViewModelService
 {
     private var bookingView : BookingViewService?
     private let hotel  =  HotelDataLayer.getInstance()

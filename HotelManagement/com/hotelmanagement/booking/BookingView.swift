@@ -1,5 +1,5 @@
 import Foundation
-class BookingView
+class BookingView  : BookingViewService
 {
     private var bookingViewModel : BookingViewModelService
     
@@ -81,8 +81,8 @@ class BookingView
                 
                 let roomBooking = bookingViewModel.addedConfirmingBooking(guest : guest, roomNumber: roomNumber, dates: dates, noOfGuest: noOfGuest)
                 let paymentViewModel = PaymentViewModel()
-                let paymentView = PaymentView(paymentViewModel: paymentViewModel as! PaymentViewModelService)
-                paymentViewModel.setPaymentView(paymentView: paymentView as! PaymentViewService)
+                let paymentView = PaymentView(paymentViewModel: paymentViewModel as PaymentViewModelService)
+                paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
                 paymentView.getInputPaymentProcess(roomBooking : roomBooking)
             }
             else
@@ -95,8 +95,8 @@ class BookingView
     func displayRoomBookingDetails(bookings : [RoomBooking])
     {
         let paymentViewModel = PaymentViewModel()
-        let paymentView = PaymentView(paymentViewModel: paymentViewModel as! PaymentViewModelService)
-        paymentViewModel.setPaymentView(paymentView: paymentView as! PaymentViewService)
+        let paymentView = PaymentView(paymentViewModel: paymentViewModel as PaymentViewModelService)
+        paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
         let payment : [Int : Payment] = paymentViewModel.getPayementDetails()
         for booking in bookings
         {
@@ -166,8 +166,8 @@ class BookingView
             if bookingViewModel.checkBooking(roomBooking: booking!)
             {
                 let paymentViewModel = PaymentViewModel()
-                let paymentView = PaymentView(paymentViewModel:paymentViewModel as! PaymentViewModelService )
-                paymentViewModel.setPaymentView(paymentView: paymentView as! PaymentViewService)
+                let paymentView = PaymentView(paymentViewModel:paymentViewModel as PaymentViewModelService )
+                paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
                 if paymentViewModel.isPaymentChecking(roomBooking  : booking!)
                 {
                     bookingViewModel.setCheckInDetails(booking: booking!)
@@ -197,8 +197,8 @@ class BookingView
             return
         }
         let paymentViewModel = PaymentViewModel()
-        let paymentView = PaymentView(paymentViewModel:paymentViewModel as! PaymentViewModelService )
-        paymentViewModel.setPaymentView(paymentView: paymentView as! PaymentViewService)
+        let paymentView = PaymentView(paymentViewModel:paymentViewModel as PaymentViewModelService )
+        paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
         
         if paymentViewModel.isPaymentChecking(roomBooking: booking , amount : amount)
         {

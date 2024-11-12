@@ -48,11 +48,11 @@ class RoomView : RoomViewService
     }
     func  getRoomSetupDetails()
     {
-        let capacity = ValidInput.getCapacity(inputName: "Enter the capacity of the room:")
-        let roomType = ValidInput.getRoomType(inputName: "Enter the room type:")
-        let bedType = ValidInput.getBedType(inputName: "Enter the bed type:")
-        let price = ValidInput.getPrice(inputName: "Enter the price of the room:");
-        let amenities = ValidInput.getRoomAmenities(inputName: "Enter the amenities:")
+        let capacity = ValidInput.getCapacity(inputName: "Enter the capacity of the room : ")
+        let roomType = ValidInput.getRoomType(inputName: "Enter the room type            : ")
+        let bedType  = ValidInput.getBedType(inputName : "Enter the bed type             : ")
+        let price     = ValidInput.getPrice(inputName  : "Enter the price of the room    : ");
+  let amenities = ValidInput.getRoomAmenities(inputName: "Enter the amenities            : ")
         let room = Room(capacity: capacity, roomType: roomType, bedType: bedType,price: price,amenities: amenities)
         HotelDataLayer.getInstance().addRooms(room: room)
     }
@@ -100,9 +100,9 @@ class RoomView : RoomViewService
     }
     func bookingProcess(guest : Guest )
     {
-        let bookingViewModel = BookingViewModel()
-        let bookingView = BookingView(bookingViewModel: bookingViewModel as! BookingViewModelService)
-        bookingViewModel.setBookingView(bookingView: bookingView as! BookingViewService)
+        let bookingViewModel  = BookingViewModel()
+        let bookingView    = BookingView(bookingViewModel: bookingViewModel)
+        bookingViewModel.setBookingView(bookingView: bookingView)
         bookingView.bookingInit(guest : guest)
     }
-}
+} 
