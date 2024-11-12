@@ -30,6 +30,7 @@ class BookingViewModel : BookingViewModelService
         }
         return true
     }
+    
     func addedConfirmingBooking (guest : Guest, roomNumber: Int, dates: [Date], noOfGuest: Int) -> RoomBooking
     {
         let booking : RoomBooking = RoomBooking(roomNumber: roomNumber, guestId: guest.guestIdProperty, noOfGuest: noOfGuest, roomBookingDate: dates)
@@ -126,7 +127,7 @@ class BookingViewModel : BookingViewModelService
         var room =  rooms [booking.roomNumberProperty]
         room?.changeAvailability(true)
         var log =  hotel.getLog(bookingId: booking.bookingIdProperty)
-        log.setCheckOut(Validation.convertDateToString(date: Date())!)
+        log?.setCheckOut(Validation.convertDateToString(date: Date())!)
     }
     
     func isAvailableCheckOut(bookingId : Int) -> (Bool,RoomBooking?)

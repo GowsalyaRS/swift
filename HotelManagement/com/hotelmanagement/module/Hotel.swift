@@ -30,12 +30,13 @@ struct Hotel : CustomStringConvertible
     var description: String
     {
         return     """
-                    Hotel Details :-
-                    Hotel Name  : \(hotelName)
+                    -------------------------------------------
+                    Hotel Name  : \(hotelName)  
                     Phone No    : \(phoneNo)
+                    Email       : \(email)                    
                     Address     : \(address)
-                    Email       : \(email)
                     Amenities   : \(amenities)
+                    -------------------------------------------
                    """
     }
 }

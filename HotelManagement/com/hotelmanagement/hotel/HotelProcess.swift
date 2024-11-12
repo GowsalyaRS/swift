@@ -5,15 +5,16 @@ struct HotelProcess
     
     func hotelSetup()
     {
-     let hotelName    = ValidInput.getName(inputName     :" Enter the Hotel Name     : ")
-     let phoneNo      = ValidInput.getPhoneNo(inputName  :" Enter the PhoneNo        : ")
-     let hotelAddress = ValidInput.getAddress(inputName  :" Enter the Hotel  Address : ")
-     let email        = ValidInput.getEmail(inputName    :" Enter the Email          : ")
-     let amenities    = ValidInput.getAmenities(inputName:" Enter the Amenities      : ")
-     let hotel        = Hotel (hotelName: hotelName, phoneNo: phoneNo, address:hotelAddress, email: email, amenities: amenities)
+        let hotelName    = ValidInput.getName(inputName     :" Enter the Hotel Name     : ")
+        let phoneNo      = ValidInput.getPhoneNo(inputName  :" Enter the PhoneNo        : ")
+        let hotelAddress = ValidInput.getAddress(inputName  :" Enter the Hotel  Address : ")
+        let email        = ValidInput.getEmail(inputName    :" Enter the Email          : ")
+        let amenities    = ValidInput.getAmenities(inputName:" Enter the Amenities      : ")
+        let hotel        = Hotel (hotelName: hotelName, phoneNo: phoneNo, address:hotelAddress, email: email, amenities: amenities)
         hotelDataLayer.hotelProperty = hotel
         print ("Hotel Setup Completed")
-        print ("---------------------------------------","\n",hotel, "\n","---------------------------------------")  }
+        print (hotel)
+    }
     
     func hotelInit()
     {

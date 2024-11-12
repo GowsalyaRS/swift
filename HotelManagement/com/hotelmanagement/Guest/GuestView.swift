@@ -27,8 +27,8 @@ class GuestView : GuestViewService
     
     func inputGetAuthendicationDetails() -> (username: String, password: String)
     {
-        let username = ValidInput.getusername(inputName : "Enter your username : ")
-        let password = ValidInput.getPassword(inputName : "Enter your password : ")
+        let username = ValidInput.getusername(inputName : "Enter your username   : ")
+        let password = ValidInput.getPassword(inputName : "Enter your password   : ")
         return (username: username, password: password)
     }
     

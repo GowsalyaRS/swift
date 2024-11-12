@@ -21,6 +21,8 @@ struct AdminProcess
                        guestProcess()
                     case AdminOption.Booking_Details.rawValue:
                       bookingProcess()
+                   case AdminOption.FeedBack_Details.rawValue :
+                      FeedbackProcess()
                     case AdminOption.Back.rawValue:
                         return
                     default : print("Invalid choice")
@@ -54,6 +56,15 @@ struct AdminProcess
         let bookingView   : BookingViewService = BookingView(bookingViewModel: bookingViewModel) as BookingViewService
         bookingViewModel.setBookingView(bookingView: bookingView)
         bookingView.getInputBookingStatus()
+    }
+   
+    func FeedbackProcess()
+    {
+        let feedbackViewModel  : FeedbackViewModelService = FeedbackViewModel()
+        let feedbackView  : FeedbackViewService    = FeedbackView(feedbackViewModel: feedbackViewModel)
+        feedbackViewModel.setFeedbackView(feedbackView)
+        let feedback : [Feedback] = feedbackViewModel.getFeedback()
+        feedbackView.displayFeedback(feedback: feedback)
     }
 }
   

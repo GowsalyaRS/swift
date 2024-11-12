@@ -56,6 +56,21 @@ class BookingView  : BookingViewService
                         {
                           print ("No Cancelling History")
                         }
+                     case BookingGuestOption.WriteFeedback.rawValue:
+                         let bookingId =  getInputBookingId()
+                     guard bookingId > 0 else { print("Invalid booking id"); return}
+                     let (isValid , booking) = bookingViewModel.checkBooking(bookingId: bookingId)
+                      if isValid
+                      {
+                          let  feedbackViewModel = FeedbackViewModel()
+                          let feedbackView = FeedbackView(feedbackViewModel: feedbackViewModel)
+                          feedbackViewModel.setFeedbackView(feedbackView)
+                          feedbackView.getInputFeedbackDetails(booking: booking!)
+                      }
+                      else
+                      {
+                          print("Invalid booking id")
+                      }
                      case BookingGuestOption.Back.rawValue:
                      return
                      default : print("Invalid choice")
@@ -90,6 +105,10 @@ class BookingView  : BookingViewService
             {
                print ("Room \(roomNumber) is already booked during the requested dates.")
             }
+        }
+        else
+        {
+            print ("Invalid the room Number")
         }
     }
     

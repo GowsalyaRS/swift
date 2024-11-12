@@ -11,6 +11,7 @@ class HotelDataLayer
     private var cancelBooking         : [Int : RoomCancellation] = [:]
     private var booking               : [Int : RoomBooking] = [:]
     private var logMaintain           : [Int : LogMaintain] = [:]   // BookingId
+    private var feedback              : [Int : Feedback] = [:]    // bookingId
     private init()
     {
     }
@@ -33,11 +34,24 @@ class HotelDataLayer
             hotel = newValue
         }
     }
+    func getFeedback(bookingId : Int) -> Feedback?
+    {
+        return feedback[bookingId]
+    }
+    func addFeedback(bookingId : Int ,feedback : Feedback)
+    {
+        self.feedback[bookingId] = feedback
+    }
+    func getAllFeedback() -> [Feedback]
+    {
+        let allFeedback : [Feedback] = Array(feedback.values)
+        return allFeedback
+    }
     func addLog (bookingId : Int ,log : LogMaintain )
     {
         logMaintain[bookingId] = log
     }
-    func getLog(bookingId : Int) ->  LogMaintain
+    func getLog(bookingId : Int) ->  LogMaintain?
     {
         return logMaintain[bookingId]
     }

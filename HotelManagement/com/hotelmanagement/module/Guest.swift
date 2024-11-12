@@ -24,9 +24,11 @@ struct Guest :  CustomStringConvertible
     var description: String
     {
         return """
+                  ------------------------------
                   Name      : \(name), 
                   Phone No  : \(phoneNo), 
                   Address   : \(address)
+                  ------------------------------
                """
     }
 }
