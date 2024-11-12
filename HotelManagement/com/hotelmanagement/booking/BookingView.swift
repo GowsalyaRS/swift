@@ -1,6 +1,7 @@
 import Foundation
 class BookingView  : BookingViewService
 {
+    
     private var bookingViewModel : BookingViewModelService
     
     init(bookingViewModel : BookingViewModelService)
@@ -156,7 +157,8 @@ class BookingView  : BookingViewService
         }
         return 0
     }
-    func getInputCheckBooking()
+    
+    func getInputCheckInBooking()
     {
         let bookingId : Int  = getInputBookingId()
         guard bookingId > 0 else { print ("Invalid input"); return }
@@ -174,7 +176,9 @@ class BookingView  : BookingViewService
                 }
                 else
                 {
-                    getInputCheckBooking(booking : booking!)
+                    let amount = paymentViewModel.getTotalAmount (roomBooking: booking!)
+                    print ("Your pending Amount is : \(amount)")
+                    getInputCheckInBooking(booking : booking! , totalAmount : amount)
                 }
             }
             else
@@ -188,7 +192,7 @@ class BookingView  : BookingViewService
         }
     }
     
-    func  getInputCheckBooking(booking : RoomBooking)
+    func  getInputCheckInBooking(booking : RoomBooking ,totalAmount : Float)
     {
         print ("Enter the Amount to be paid : ")
         guard let amount : Float = Float.init(readLine()!)else
@@ -196,11 +200,7 @@ class BookingView  : BookingViewService
             print ("Invalid Amount")
             return
         }
-        let paymentViewModel = PaymentViewModel()
-        let paymentView = PaymentView(paymentViewModel:paymentViewModel as PaymentViewModelService )
-        paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
-        
-        if paymentViewModel.isPaymentChecking(roomBooking: booking , amount : amount)
+        if amount == totalAmount
         {
             bookingViewModel.setCheckInDetails(booking: booking)
         }
@@ -214,8 +214,7 @@ class BookingView  : BookingViewService
     {
         let bookingId : Int  = getInputBookingId()
         guard bookingId > 0 else { print ("Invalid input"); return }
-        var  (isValid ,booking) =  bookingViewModel.isAvailableCheckOut(bookingId : bookingId)
-        
+        let  (isValid ,booking) =  bookingViewModel.isAvailableCheckOut(bookingId : bookingId)
         if isValid
         {
             bookingViewModel.setCheckoutDetails(booking: booking!)

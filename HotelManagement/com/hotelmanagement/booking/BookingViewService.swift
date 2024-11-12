@@ -1,7 +1,10 @@
 protocol BookingViewService
 {
-    func displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
-    func getInputBookingStatus()
-    func getInputCheckBooking()
-    func bookingInit(guest : Guest)
+    func  displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
+    func  getInputBookingStatus()
+    func  getInputCheckInBooking()
+    func  getInputCheckInBooking(booking : RoomBooking,totalAmount : Float)
+    func  bookingInit(guest : Guest)
+    func  getInputCheckOutBooking()
+    
 }

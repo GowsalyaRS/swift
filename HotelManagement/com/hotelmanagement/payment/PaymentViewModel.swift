@@ -52,16 +52,11 @@ class PaymentViewModel : PaymentViewModelService
         return false
     }
     
-    func isPaymentChecking (roomBooking : RoomBooking , amount : Float) -> Bool
+    func getTotalAmount(roomBooking : RoomBooking) -> Float
     {
         let payments : [Int:Payment] =  hotel.getPaymentDetails()
         var payment = payments[roomBooking.bookingIdProperty]
-        if payment?.totalAmountProperty == amount
-        {
-            payment?.setPaymentStatus(PaymentStatus.Success)
-            return true
-        }
-        return false
+        return  payment?.totalAmountProperty ?? 0
     }
 }
  

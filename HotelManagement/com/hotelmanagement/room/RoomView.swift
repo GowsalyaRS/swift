@@ -29,12 +29,15 @@ class RoomView : RoomViewService
                             viewRoomDetails(room : rooms)
                         }
                     case RoomAdminOption.Room_Booking_Checkout.rawValue :
-                        return
-                    case RoomAdminOption.Room_Booking_Checkin.rawValue  :
-                       let bookingViewModel = BookingViewModel() as! BookingViewModelService
-                       let bookingView = BookingView(bookingViewModel: bookingViewModel) as! BookingViewService
+                       let bookingViewModel = BookingViewModel()
+                       let bookingView = BookingView(bookingViewModel: bookingViewModel)
                        bookingViewModel.setBookingView(bookingView: bookingView)
-                       bookingView.getInputCheckBooking()
+                       bookingView.getInputCheckOutBooking()
+                    case RoomAdminOption.Room_Booking_Checkin.rawValue  :
+                       let bookingViewModel = BookingViewModel()
+                       let bookingView = BookingView(bookingViewModel: bookingViewModel)
+                       bookingViewModel.setBookingView(bookingView: bookingView)
+                       bookingView.getInputCheckInBooking()
                     case RoomAdminOption.Back.rawValue :
                         return
                     default : print("Invalid choice")
@@ -52,7 +55,7 @@ class RoomView : RoomViewService
         let roomType = ValidInput.getRoomType(inputName: "Enter the room type            : ")
         let bedType  = ValidInput.getBedType(inputName : "Enter the bed type             : ")
         let price     = ValidInput.getPrice(inputName  : "Enter the price of the room    : ");
-  let amenities = ValidInput.getRoomAmenities(inputName: "Enter the amenities            : ")
+        let amenities = ValidInput.getRoomAmenities(inputName:"Enter the amenities              : ")
         let room = Room(capacity: capacity, roomType: roomType, bedType: bedType,price: price,amenities: amenities)
         HotelDataLayer.getInstance().addRooms(room: room)
     }

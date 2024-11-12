@@ -157,7 +157,7 @@ struct  Validation
    
     static func convertDate(date: Date) -> Date?
      {
-         dateFormatter.dateFormat = format
+        dateFormatter.dateFormat = format
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         let currentDate = Date()
@@ -167,4 +167,13 @@ struct  Validation
         }
          return nil
      }
+    
+    static func convertDateToString(date: Date) -> String?
+    {
+        dateFormatter.dateFormat = "yyyy-MM-dd hh:mm a"
+        dateFormatter.timeZone = TimeZone(identifier: "Asia/Kolkata")
+        let currentDate = Date()
+        let istDateString = dateFormatter.string(from: currentDate)
+        return istDateString
+    }
 }

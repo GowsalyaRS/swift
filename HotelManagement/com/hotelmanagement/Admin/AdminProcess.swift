@@ -5,7 +5,6 @@ struct AdminProcess
         while (true)
         {
             print("-----------------------------")
-            print ("welcome to admin page")
             for adminOption in AdminOption.allCases
             {
                 print("\(adminOption.rawValue) . \(adminOption)")

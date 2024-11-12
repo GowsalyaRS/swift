@@ -1,6 +1,7 @@
 import Foundation
 protocol BookingViewModelService
 {
+    func setBookingView(bookingView: BookingViewService)
     func isAvailableBookingHistory (guest : Guest , bookingStatus : BookingStatus) -> [RoomBooking]?
     func getValidBooking (guest: Guest) -> [RoomBooking]
     func isRoomAvailabilityChecking(roomNumber: Int, startDate: Date, endDate: Date) -> Bool
@@ -14,5 +15,4 @@ protocol BookingViewModelService
     func isValidBooking(roomBookings : [RoomBooking] , roomNumber : Int) -> RoomBooking?
     func checkBooking(bookingId: Int) -> (Bool,RoomBooking?)
     func checkBooking(roomBooking : RoomBooking) -> Bool
-    func setBookingView(bookingView: BookingViewService)
 }

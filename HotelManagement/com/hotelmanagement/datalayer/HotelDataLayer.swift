@@ -10,6 +10,7 @@ class HotelDataLayer
     private var paymentDetails        : [Int : Payment] = [:]
     private var cancelBooking         : [Int : RoomCancellation] = [:]
     private var booking               : [Int : RoomBooking] = [:]
+    private var logMaintain           : [Int : LogMaintain] = [:]   // BookingId
     private init()
     {
     }
@@ -31,6 +32,14 @@ class HotelDataLayer
         {
             hotel = newValue
         }
+    }
+    func addLog (bookingId : Int ,log : LogMaintain )
+    {
+        logMaintain[bookingId] = log
+    }
+    func getLog(bookingId : Int) ->  LogMaintain
+    {
+        return logMaintain[bookingId]
     }
     func addRooms(room : Room)
     {
