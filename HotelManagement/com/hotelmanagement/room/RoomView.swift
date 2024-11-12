@@ -1,7 +1,7 @@
-class RoomView
+class RoomView : RoomViewService
 {
-    private var roomViewModel : RoomViewModel
-    init(roomViewModel : RoomViewModel)
+    private var roomViewModel : RoomViewModelService
+    init(roomViewModel : RoomViewModelService)
     {
         self.roomViewModel = roomViewModel
     }
@@ -31,8 +31,8 @@ class RoomView
                     case RoomAdminOption.Room_Booking_Checkout.rawValue :
                         return
                     case RoomAdminOption.Room_Booking_Checkin.rawValue  :
-                       let bookingViewModel = BookingViewModel()
-                       let bookingView = BookingView(bookingViewModel: bookingViewModel)
+                       let bookingViewModel = BookingViewModel() as! BookingViewModelService
+                       let bookingView = BookingView(bookingViewModel: bookingViewModel) as! BookingViewService
                        bookingViewModel.setBookingView(bookingView: bookingView)
                        bookingView.getInputCheckBooking()
                     case RoomAdminOption.Back.rawValue :
@@ -101,8 +101,8 @@ class RoomView
     func bookingProcess(guest : Guest )
     {
         let bookingViewModel = BookingViewModel()
-        let bookingView = BookingView(bookingViewModel: bookingViewModel)
-        bookingViewModel.setBookingView(bookingView: bookingView)
+        let bookingView = BookingView(bookingViewModel: bookingViewModel as! BookingViewModelService)
+        bookingViewModel.setBookingView(bookingView: bookingView as! BookingViewService)
         bookingView.bookingInit(guest : guest)
     }
 }

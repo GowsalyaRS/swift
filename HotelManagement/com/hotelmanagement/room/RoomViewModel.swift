@@ -1,7 +1,7 @@
-class RoomViewModel
+class RoomViewModel : RoomViewModelService
 {
-    private  var roomView : RoomView?
-    func setRoomView( roomView: RoomView)
+    private  var roomView : RoomViewService?
+    func setRoomView( roomView: RoomViewService)
     {
         self.roomView = roomView
     }

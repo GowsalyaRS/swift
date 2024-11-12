@@ -37,15 +37,13 @@ struct Room : CustomStringConvertible
     
     var availbleProperty : Bool
     {
-        get
-        {
-            return available
-        }
-        set
-        {
-            available = newValue
-        }
+       return available
     }
+    mutating func changeAvailability(_ available : Bool)
+    {
+        self.available = available
+    }
+    
     var description: String
     {
         return  """

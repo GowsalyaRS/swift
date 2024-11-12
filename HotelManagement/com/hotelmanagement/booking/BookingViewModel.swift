@@ -1,10 +1,10 @@
 import Foundation
 class BookingViewModel
 {
-    private var bookingView : BookingView?
+    private var bookingView : BookingViewService?
     private let hotel  =  HotelDataLayer.getInstance()
     
-    func setBookingView(bookingView: BookingView)
+    func setBookingView(bookingView: BookingViewService)
     {
         self.bookingView = bookingView
     }
@@ -73,7 +73,7 @@ class BookingViewModel
             if roomBook.roomNumberProperty == roomNumber
             {
                 let date : [Date] =  roomBook.roomBookingDateProperty
-                if (date.first != nil && date.first! < Date())
+                if (date.first != nil && date.first! >= Date())
                 {
                     return roomBook
                 }
@@ -89,8 +89,7 @@ class BookingViewModel
         hotel.setCancelBooking(cancelBooking: roomcancelling)
         let payments =  hotel.getPaymentDetails()
         var payment  =  payments[booking.bookingIdProperty]
-        payment?.paymentStatusProperty = PaymentStatus.Refunded
-        // login maintain created
+        payment?.setPaymentStatus(.Refunded)
     }
     
     func checkBooking(bookingId: Int) -> (Bool,RoomBooking?)
@@ -122,7 +121,7 @@ class BookingViewModel
         booking.bookingStatusProperty = BookingStatus.checkin
         let rooms = hotel.getRooms()
         var room =  rooms [booking.roomNumberProperty]
-        room?.availbleProperty = false
+        room?.changeAvailability(false)
     }
     
     func setCheckoutDetails(booking : RoomBooking)
@@ -130,6 +129,16 @@ class BookingViewModel
         booking.bookingStatusProperty = BookingStatus.checkout
         let rooms = hotel.getRooms()
         var room =  rooms [booking.roomNumberProperty]
-        room?.availbleProperty = true
+        room?.changeAvailability(true)
+    }
+    
+    func isAvailableCheckOut(bookingId : Int) -> (Bool,RoomBooking?)
+    {
+        let booking = hotel.getBooking(bookingId: bookingId)
+        if (booking != nil &&  booking?.bookingStatusProperty == BookingStatus.checkin)
+        {
+            return (true,booking)
+        }
+       return (false,nil)
     }
 }

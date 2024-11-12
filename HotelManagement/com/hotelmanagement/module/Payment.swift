@@ -17,17 +17,16 @@ struct Payment : CustomStringConvertible
         self.totalAmount    = totalAmount
     }
     var bookingIdProperty: Int { bookingId }
-    var paymentStatusProperty:
-    PaymentStatus
+    var paymentStatusProperty: PaymentStatus
     {
         get
         {
             paymentStatus
         }
-        set
-        {
-            paymentStatus = newValue
-        }
+    }
+    mutating func setPaymentStatus(_ paymentStatus: PaymentStatus)
+    {
+        self.paymentStatus = paymentStatus
     }
     var totalAmountProperty: Float { totalAmount }
     var description: String

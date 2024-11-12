@@ -35,26 +35,26 @@ struct AdminProcess
     }
     func roomProcess()
     {
-        let roomViewModel :  RoomViewModel = RoomViewModel()
-        let roomView : RoomView = RoomView(roomViewModel: roomViewModel)
+        let roomViewModel :  RoomViewModelService = RoomViewModel() as! RoomViewModelService
+        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as! RoomViewService
         roomViewModel.setRoomView(roomView: roomView)
         roomView.roomInit()
     }
     
     func guestProcess()
     {
-        let guestViewModel : GuestViewModel = GuestViewModel()
-        let guestView   : GuestView = GuestView(guestViewModel: guestViewModel)
+        let guestViewModel : GuestViewModelService = GuestViewModel() as! GuestViewModelService
+        let guestView   : GuestViewService = GuestView(guestViewModel: guestViewModel) as! GuestViewService
         guestViewModel.setGuestView(guestView: guestView)
         guestView.displayGuestDetails(guests: HotelDataLayer.getInstance().getGuests())
     }
     
     func bookingProcess()
     {
-        let bookingViewModel : BookingViewModel = BookingViewModel()
-        let bookingView   : BookingView = BookingView(bookingViewModel: bookingViewModel)
+        let bookingViewModel : BookingViewModelService = BookingViewModel() as! BookingViewModelService
+        let bookingView   : BookingViewService = BookingView(bookingViewModel: bookingViewModel) as! BookingViewService
         bookingViewModel.setBookingView(bookingView: bookingView)
         bookingView.getInputBookingStatus()
     }
 }
-
+  

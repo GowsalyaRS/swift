@@ -1,7 +1,7 @@
 class GuestView : GuestViewService
 {
-    private var guestViewModel : GuestViewModel
-    init (guestViewModel : GuestViewModel)
+    private var guestViewModel : GuestViewModelService
+    init (guestViewModel : GuestViewModelService)
     {
         self.guestViewModel = guestViewModel
     }

@@ -1,8 +1,8 @@
-class PaymentView
+class PaymentView : PaymentViewService
 {
-    private var  paymentViewModel: PaymentViewModel
+    private var  paymentViewModel: PaymentViewModelService
     
-    init(paymentViewModel: PaymentViewModel)
+    init(paymentViewModel: PaymentViewModelService)
     {
         self.paymentViewModel = paymentViewModel
     }

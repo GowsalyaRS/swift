@@ -1,9 +1,9 @@
-class PaymentViewModel
+class PaymentViewModel : PaymentViewModelService
 {
-    private var paymentView : PaymentView?
+    private var paymentView : PaymentViewService?
     let hotel = HotelDataLayer.getInstance()
     
-    func setPaymentView(paymentView: PaymentView)
+    func setPaymentView(paymentView: PaymentViewService)
     {
         self.paymentView = paymentView
     }
@@ -58,7 +58,7 @@ class PaymentViewModel
         var payment = payments[roomBooking.bookingIdProperty]
         if payment?.totalAmountProperty == amount
         {
-            payment?.paymentStatusProperty = PaymentStatus.Success
+            payment?.setPaymentStatus(PaymentStatus.Success)
             return true
         }
         return false

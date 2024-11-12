@@ -50,23 +50,23 @@ struct HotelProcess
     func loginProcess()
     {
         let loginViewModel :  LoginViewModelService = LoginViewModel()
-        let loginView : LoginViewService = LoginView(loginViewModel: loginViewModel)
+        let loginView : LoginViewService = LoginView(loginViewModel: loginViewModel) 
         loginViewModel.setLoginView(loginView: loginView)
         loginView.getLoginData()
     }
     
     func guestSigninProcess(guest : Guest)
     {
-        let roomViewModel = RoomViewModel()
-        let roomView = RoomView(roomViewModel: roomViewModel)
+        let roomViewModel : RoomViewModelService = RoomViewModel()
+        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel)
         roomViewModel.setRoomView(roomView: roomView)
         roomView.roomGuestInit(guest : guest)
     }
 
     func guestSignupProcess()
     {
-        let guestViewModel : GuestViewModel = GuestViewModel()
-        let guestView : GuestView = GuestView(guestViewModel: guestViewModel)
+        let guestViewModel : GuestViewModelService = GuestViewModel()
+        let guestView : GuestViewService = GuestView(guestViewModel: guestViewModel)
         guestViewModel.setGuestView(guestView: guestView)
         guestView.inputGetGuestSignupDetails()
     }

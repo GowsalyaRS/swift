@@ -1,9 +1,9 @@
 class GuestViewModel : GuestViewModelService
 {
-    private var guestView : GuestView?
+    private var guestView : GuestViewService?
     private let hotel = HotelDataLayer.getInstance()
     
-    public func setGuestView(guestView: GuestView)
+    func setGuestView(guestView: GuestViewService)
     {
         self.guestView = guestView
     }
