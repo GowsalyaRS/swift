@@ -89,7 +89,14 @@ class BookingViewModel : BookingViewModelService
         hotel.setCancelBooking(cancelBooking: roomcancelling)
         let payments =  hotel.getPaymentDetails()
         var payment  =  payments[booking.bookingIdProperty]
-        payment?.setPaymentStatus(.Refunded)
+        if  payment?.paymentStatusProperty  == PaymentStatus.Pending
+        {
+           payment?.setPaymentStatus(.No_Paid)
+        }
+        else
+        {
+            payment?.setPaymentStatus(.Success)
+        }
     }
     
     func checkBooking(bookingId: Int) -> (Bool,RoomBooking?)

@@ -21,6 +21,7 @@ class PaymentView : PaymentViewService
                  if (amount == total)
                  {
                      paymentViewModel.setPaymentDetails(roomBooking: roomBooking, amount: amount, paymentStatus: PaymentStatus.Success)
+                     print("Booking is Confirmed and Payment is successful")
                      return
                  }
                  else
