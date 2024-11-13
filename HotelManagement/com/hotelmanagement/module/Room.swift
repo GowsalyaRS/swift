@@ -10,7 +10,7 @@ struct Room : CustomStringConvertible
     {
         didSet
         {
-            print (roomNumber , " room number  is availablity checking to change ")
+            print (roomNumber , " room number  is availablity  \(available)")
         }
     }
     private var amenities        : [String]
@@ -39,6 +39,7 @@ struct Room : CustomStringConvertible
     {
        return available
     }
+    
     mutating func changeAvailability(_ available : Bool)
     {
         self.available = available

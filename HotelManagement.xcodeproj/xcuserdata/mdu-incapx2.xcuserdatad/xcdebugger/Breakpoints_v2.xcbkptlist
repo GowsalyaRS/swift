@@ -46,8 +46,8 @@
             filePath = "HotelManagement/com/hotelmanagement/booking/BookingViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
             landmarkName = "addedConfirmingBooking(guest:roomNumber:dates:noOfGuest:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "HotelManagement/com/hotelmanagement/booking/BookingViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "39"
-            endingLineNumber = "39"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "addedConfirmingBooking(guest:roomNumber:dates:noOfGuest:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "HotelManagement/com/hotelmanagement/booking/BookingViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
             landmarkName = "addedConfirmingBooking(guest:roomNumber:dates:noOfGuest:)"
             landmarkType = "7">
          </BreakpointContent>

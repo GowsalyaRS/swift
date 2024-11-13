@@ -55,7 +55,7 @@ class PaymentViewModel : PaymentViewModelService
     func getTotalAmount(roomBooking : RoomBooking) -> Float
     {
         let payments : [Int:Payment] =  hotel.getPaymentDetails()
-        var payment = payments[roomBooking.bookingIdProperty]
+        let payment = payments[roomBooking.bookingIdProperty]
         return  payment?.totalAmountProperty ?? 0
     }
 }

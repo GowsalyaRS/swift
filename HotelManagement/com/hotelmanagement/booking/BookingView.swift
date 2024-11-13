@@ -108,7 +108,7 @@ class BookingView  : BookingViewService
         }
         else
         {
-            print ("Invalid the room Number")
+            print ("This room is not available")
         }
     }
     
