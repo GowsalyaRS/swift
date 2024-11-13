@@ -1,6 +1,6 @@
 class RoomView : RoomViewService
 {
-    private var roomViewModel : RoomViewModelService
+    private unowned var roomViewModel : RoomViewModelService
     init(roomViewModel : RoomViewModelService)
     {
         self.roomViewModel = roomViewModel

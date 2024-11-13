@@ -1,7 +1,7 @@
 import Foundation
 class BookingViewModel : BookingViewModelService
 {
-    private var bookingView : BookingViewService?
+    private weak var bookingView : BookingViewService?
     private let hotel  =  HotelDataLayer.getInstance()
     
     func setBookingView(bookingView: BookingViewService)
@@ -73,7 +73,7 @@ class BookingViewModel : BookingViewModelService
             if roomBook.roomNumberProperty == roomNumber
             {
                 let date : [Date] =  roomBook.roomBookingDateProperty
-                if (date.first != nil && date.first! >= Date())
+                if (date.first != nil && date.first! > Date())
                 {
                     return roomBook
                 }

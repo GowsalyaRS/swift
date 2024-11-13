@@ -1,4 +1,4 @@
-protocol GuestViewModelService
+protocol GuestViewModelService : AnyObject
 {
     func isAvailablePhoneNo(phoneNo : Int64) -> Bool
     func createGuest (name : String, phoneNo : Int64 , address : String) -> Guest

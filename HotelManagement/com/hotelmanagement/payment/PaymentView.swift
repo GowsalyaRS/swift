@@ -1,6 +1,6 @@
 class PaymentView : PaymentViewService
 {
-    private var  paymentViewModel: PaymentViewModelService
+    private unowned var  paymentViewModel: PaymentViewModelService
     
     init(paymentViewModel: PaymentViewModelService)
     {
@@ -15,22 +15,24 @@ class PaymentView : PaymentViewService
          let inputInt = readLine()
          if  inputInt == "1"
          {
-            let amount  : Float = ValidInput.getPrice(inputName : "Enter the payment Amount")
-            if (amount == total)
-            {
-                paymentViewModel.setPaymentDetails(roomBooking: roomBooking, amount: amount, paymentStatus: PaymentStatus.Success)
-                return
-             }
-             else
+             while(true)
              {
-                print("Please Enter the valid Amount ")
+                 let amount  : Float = ValidInput.getPrice(inputName : "Enter the payment Amount")
+                 if (amount == total)
+                 {
+                     paymentViewModel.setPaymentDetails(roomBooking: roomBooking, amount: amount, paymentStatus: PaymentStatus.Success)
+                     return
+                 }
+                 else
+                 {
+                     print("Please Enter the valid Amount ")
+                 }
              }
           }
           else
           {
             paymentViewModel.setPaymentDetails(roomBooking: roomBooking, amount: total ,paymentStatus: PaymentStatus.Pending)
-            print ("Your payment is pending ")
-            return
+            print ("Your Booking is Confirmed and Your payment is pending ")
          }
     }
 }

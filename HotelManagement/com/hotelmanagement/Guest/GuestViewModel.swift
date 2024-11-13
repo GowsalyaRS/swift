@@ -1,6 +1,6 @@
 class GuestViewModel : GuestViewModelService
 {
-    private var guestView : GuestViewService?
+    private weak var guestView : GuestViewService?
     private let hotel = HotelDataLayer.getInstance()
     
     func setGuestView(guestView: GuestViewService)

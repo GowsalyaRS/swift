@@ -1,6 +1,6 @@
 class FeedbackView : FeedbackViewService
 {
-    private var feedbackViewModel  : FeedbackViewModelService
+    private unowned var feedbackViewModel  : FeedbackViewModelService
     
     init(feedbackViewModel: FeedbackViewModelService)
     {

@@ -1,4 +1,4 @@
-protocol FeedbackViewModelService
+protocol FeedbackViewModelService : AnyObject
 {
     func setFeedbackView(_ feedbackView: FeedbackViewService)
     func isAvailableFeedback(booking: RoomBooking) -> Bool

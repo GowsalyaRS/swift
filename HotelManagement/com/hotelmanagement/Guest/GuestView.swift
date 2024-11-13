@@ -1,6 +1,6 @@
 class GuestView : GuestViewService
 {
-    private var guestViewModel : GuestViewModelService
+    private unowned var guestViewModel : GuestViewModelService
     init (guestViewModel : GuestViewModelService)
     {
         self.guestViewModel = guestViewModel

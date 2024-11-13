@@ -1,4 +1,4 @@
-protocol BookingViewService
+protocol BookingViewService : AnyObject
 {
     func  displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
     func  getInputBookingStatus()

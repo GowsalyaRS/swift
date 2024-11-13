@@ -1,6 +1,6 @@
 class RoomViewModel : RoomViewModelService
 {
-    private  var roomView : RoomViewService?
+    private  weak var roomView : RoomViewService?
     func setRoomView( roomView: RoomViewService)
     {
         self.roomView = roomView

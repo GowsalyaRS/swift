@@ -1,6 +1,6 @@
 class PaymentViewModel : PaymentViewModelService
 {
-    private var paymentView : PaymentViewService?
+    private weak var paymentView : PaymentViewService?
     let hotel = HotelDataLayer.getInstance()
     
     func setPaymentView(paymentView: PaymentViewService)

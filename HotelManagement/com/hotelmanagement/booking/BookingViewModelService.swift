@@ -1,5 +1,5 @@
 import Foundation
-protocol BookingViewModelService
+protocol BookingViewModelService : AnyObject
 {
     func setBookingView(bookingView: BookingViewService)
     func isAvailableBookingHistory (guest : Guest , bookingStatus : BookingStatus) -> [RoomBooking]?

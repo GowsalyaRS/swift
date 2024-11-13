@@ -1,6 +1,6 @@
 class FeedbackViewModel : FeedbackViewModelService
 {
-    private var feedbackView  : FeedbackViewService?
+    private weak var feedbackView  : FeedbackViewService?
     private var hotel = HotelDataLayer.getInstance()
     func setFeedbackView(_ feedbackView: FeedbackViewService)
     {

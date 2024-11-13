@@ -1,4 +1,4 @@
-protocol PaymentViewModelService
+protocol PaymentViewModelService : AnyObject
 {
     func calculateAmount(roomNumber : Int )  -> Float
     func setPaymentView(paymentView: PaymentViewService)

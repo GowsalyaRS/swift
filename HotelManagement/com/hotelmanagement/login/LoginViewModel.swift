@@ -1,6 +1,6 @@
 public class LoginViewModel : LoginViewModelService
 {
-     private var  loginView : LoginViewService?
+     private unowned var  loginView : LoginViewService?
      private  let  hotel  =  HotelDataLayer.getInstance()
      func setLoginView( loginView : LoginViewService)
      {

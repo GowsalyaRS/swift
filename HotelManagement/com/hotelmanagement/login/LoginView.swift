@@ -1,6 +1,6 @@
 public class LoginView : LoginViewService
 {
-    private  var  loginViewModel : LoginViewModelService?
+    private weak  var  loginViewModel : LoginViewModelService?
     
      init( loginViewModel : LoginViewModelService)
      {

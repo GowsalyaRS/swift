@@ -2,7 +2,7 @@ import Foundation
 class BookingView  : BookingViewService
 {
     
-    private var bookingViewModel : BookingViewModelService
+    private unowned var bookingViewModel : BookingViewModelService
     
     init(bookingViewModel : BookingViewModelService)
     {
