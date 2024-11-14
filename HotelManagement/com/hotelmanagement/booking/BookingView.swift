@@ -14,7 +14,12 @@ class BookingView  : BookingViewService
     {
         self.delegate = delegate
     }
-    
+    func  bookingAccess(guest : Guest)
+    {
+        print ("Welcome  \(guest.nameProperty)) to  our Booking ")
+        bookingInit(guest: guest)
+    }
+
     func bookingInit(guest : Guest)
     {
          while (true)
@@ -97,7 +102,7 @@ class BookingView  : BookingViewService
     {
            let roomNumber = ValidInput.getCapacity(inputName  :" Enter the room number   : ")
           
-        if ((delegate?.isValidRoomNumber(roomNumber : roomNumber)) != nil)
+        if ((delegate?.isValidRoomNumber(roomNumber : roomNumber)) == true)
         {
             let date : Date = ValidInput.getDate(inputName    :" Enter the Date         : ")
             let days =  ValidInput.getCapacity(inputName      :" Enter the staying days : ")

@@ -5,6 +5,10 @@ class RoomView : RoomViewService
     {
         self.roomViewModel = roomViewModel
     }
+    func roomAccess()
+    {
+        roomInit()
+    }
     func roomInit()
     {
         while (true)
@@ -23,7 +27,7 @@ class RoomView : RoomViewService
                     case RoomAdminOption.Add_Rooms.rawValue :
                         getRoomSetupDetails()
                     case RoomAdminOption.View_Rooms_Details.rawValue :
-                        let (isAvailable, rooms) = roomViewModel.isHotelRoomCheck()
+                        let (isAvailable, rooms) = roomViewModel.isRoomChecking()
                         if(isAvailable)
                         {
                             viewRoomDetails(room : rooms)
@@ -83,7 +87,7 @@ class RoomView : RoomViewService
                 switch choice
                 {
                     case RoomGuestOption.ListOfRoom.rawValue :
-                        let (isAvailable, rooms) = roomViewModel.isHotelRoomCheck()
+                        let (isAvailable, rooms) = roomViewModel.isRoomChecking()
                         if(isAvailable)
                         {
                             viewRoomDetails(room : rooms)
@@ -106,6 +110,14 @@ class RoomView : RoomViewService
         let bookingViewModel  = BookingViewModel()
         let bookingView    = BookingView(bookingViewModel: bookingViewModel)
         bookingViewModel.setBookingView(bookingView: bookingView)
-        bookingView.bookingInit(guest : guest)
+        bookingView.bookingAccess(guest : guest)
     }
-} 
+    
+    func guestAccessRoom (guest : Guest)
+    {
+        print("-----------------------------------------")
+        print ("Welcome \(guest.nameProperty) ")
+        print("-----------------------------------------")
+        roomGuestInit(guest : guest)
+    }
+}

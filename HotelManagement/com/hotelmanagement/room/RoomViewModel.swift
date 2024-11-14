@@ -9,7 +9,7 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
         self.roomView = roomView
     }
     
-    func isHotelRoomCheck() -> (Bool,[Int:Room])
+    func isRoomChecking() -> (Bool,[Int:Room])
     {
         let rooms = HotelDataLayer.getInstance().getRooms()
         if   rooms.isEmpty

@@ -39,7 +39,7 @@ struct AdminProcess
         let roomViewModel :  RoomViewModelService = RoomViewModel() as RoomViewModelService
         let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
         roomViewModel.setRoomView(roomView: roomView)
-        roomView.roomInit()
+        roomView.roomAccess()
     }
     
     func guestProcess()

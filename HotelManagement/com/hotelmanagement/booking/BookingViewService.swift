@@ -4,7 +4,6 @@ protocol BookingViewService : AnyObject
     func  getInputBookingStatus()
     func  getInputCheckInBooking()
     func  getInputCheckInBooking(booking : RoomBooking,totalAmount : Float)
-    func  bookingInit(guest : Guest)
+    func  bookingAccess(guest : Guest)
     func  getInputCheckOutBooking()
-    
 }

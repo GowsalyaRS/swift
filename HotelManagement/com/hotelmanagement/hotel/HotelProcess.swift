@@ -61,9 +61,9 @@ struct HotelProcess
         let roomViewModel : RoomViewModelService = RoomViewModel()
         let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel)
         roomViewModel.setRoomView(roomView: roomView)
-        roomView.roomGuestInit(guest : guest)
+        roomView.guestAccessRoom(guest: guest)
     }
-
+    
     func guestSignupProcess()
     {
         let guestViewModel : GuestViewModelService = GuestViewModel()

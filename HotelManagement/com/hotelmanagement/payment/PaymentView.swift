@@ -11,13 +11,13 @@ class PaymentView : PaymentViewService
     {
         let total =   paymentViewModel.calculateAmount(roomNumber: roomBooking.roomNumberProperty)
          print ("Total Amount to be paid is :  \(total)")
-         print("press 1 to pay for room booking in online mode : ")
+         print("press 1 to pay for room booking in online mode : ",terminator: "")
          let inputInt = readLine()
          if  inputInt == "1"
          {
              while(true)
              {
-                 let amount  : Float = ValidInput.getPrice(inputName : "Enter the payment Amount")
+                 let amount  : Float = ValidInput.getPrice(inputName : "Enter the payment Amount : ")
                  if (amount == total)
                  {
                      paymentViewModel.setPaymentDetails(roomBooking: roomBooking, amount: amount, paymentStatus: PaymentStatus.Success)

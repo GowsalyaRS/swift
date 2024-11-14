@@ -8,11 +8,11 @@ class GuestView : GuestViewService
     
     func inputGetGuestSignupDetails()
     {
-        let name     = ValidInput.getName   (inputName :"Enter your name         : ")
         let phoneNo  = ValidInput.getPhoneNo(inputName :"Enter your phone number : ")
-        let address  = ValidInput.getAddress(inputName :"Enter your address      : ")
         if  guestViewModel.isAvailablePhoneNo(phoneNo : phoneNo)
         {
+            let name     = ValidInput.getName   (inputName :"Enter your name         : ")
+            let address  = ValidInput.getAddress(inputName :"Enter your address      : ")
            let userNamePassword  = inputGetAuthendicationDetails()
            let guest = guestViewModel.createGuest(name : name, phoneNo: phoneNo, address: address)
             guestViewModel.createAuthendication(guestId : guest.guestIdProperty, username : userNamePassword.username, password: userNamePassword.password)
@@ -50,6 +50,6 @@ class GuestView : GuestViewService
         let roomViewModel = RoomViewModel()
         let roomView = RoomView(roomViewModel: roomViewModel)
         roomViewModel.setRoomView(roomView: roomView)
-        roomView.roomGuestInit(guest : guest)
+        roomView.guestAccessRoom (guest : guest)
     }
 }

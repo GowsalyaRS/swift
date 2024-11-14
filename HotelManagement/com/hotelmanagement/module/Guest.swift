@@ -21,6 +21,10 @@ struct Guest :  CustomStringConvertible
     {
         return phoneNo
     }
+    var nameProperty : String
+    {
+        return name
+    }
     var description: String
     {
         return """
