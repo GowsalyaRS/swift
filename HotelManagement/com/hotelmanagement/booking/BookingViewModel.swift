@@ -3,42 +3,13 @@ class BookingViewModel : BookingViewModelService
 {
     private weak var bookingView : BookingViewService?
     private let hotel  =  HotelDataLayer.getInstance()
-    
+
     func setBookingView(bookingView: BookingViewService)
     {
         self.bookingView = bookingView
     }
     
-    func  isValidRoomNumber(roomNumber : Int) -> Bool
-    {
-        if  hotel.getRooms().contains(where: { $0.key == roomNumber })
-        {
-            if let room : Room =  hotel.getRooms()[roomNumber]
-            {
-                return room.availbleProperty
-            }
-        }
-        return false
-    }
-    
-    func isRoomAvailabilityChecking(roomNumber: Int, startDate: Date, endDate: Date) -> Bool
-    {
-        let bookings = hotel.getRoomBookings(roomNumber: roomNumber , bookingStatus : BookingStatus.confirmed)
-        for booking in bookings
-        {
-            let bookingDate = booking.roomBookingDateProperty
-            if (!bookingDate.isEmpty)
-            {
-                if startDate < bookingDate.last! && endDate > bookingDate.first!
-                {
-                    return false
-                }
-            }
-        }
-        return true
-    }
-    
-    func addedConfirmingBooking (guest : Guest, roomNumber: Int, dates: [Date], noOfGuest: Int) -> RoomBooking
+    func addedConfirmBooking (guest : Guest, roomNumber: Int, dates: [Date], noOfGuest: Int) -> RoomBooking
     {
         let booking : RoomBooking = RoomBooking(roomNumber: roomNumber, guestId: guest.guestIdProperty, noOfGuest: noOfGuest, roomBookingDate: dates)
         booking.bookingStatusProperty = .confirmed

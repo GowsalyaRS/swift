@@ -3,10 +3,16 @@ class BookingView  : BookingViewService
 {
     
     private unowned var bookingViewModel : BookingViewModelService
+    private weak var delegate : RoomDelegation?
     
     init(bookingViewModel : BookingViewModelService)
     {
        self.bookingViewModel = bookingViewModel
+    }
+    
+    func setDelegate(delegate: RoomDelegation)
+    {
+        self.delegate = delegate
     }
     
     func bookingInit(guest : Guest)
@@ -25,6 +31,10 @@ class BookingView  : BookingViewService
                  switch choice
                  {
                      case BookingGuestOption.RoomBooking.rawValue:
+                       let roomViewModel = RoomViewModel()
+                     let roomView = RoomView(roomViewModel: roomViewModel as RoomViewModelService )
+                     roomViewModel.setRoomView(roomView: roomView as RoomViewService)
+                     setDelegate(delegate: roomViewModel as RoomViewModel)
                         getRoomBookingDetails(guest : guest)
                      case BookingGuestOption.BookingHistory.rawValue:
                         if let bookings = bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.confirmed)
@@ -86,16 +96,17 @@ class BookingView  : BookingViewService
     func  getRoomBookingDetails(guest : Guest)
     {
            let roomNumber = ValidInput.getCapacity(inputName  :" Enter the room number   : ")
-        if (bookingViewModel.isValidRoomNumber(roomNumber : roomNumber))
+          
+        if ((delegate?.isValidRoomNumber(roomNumber : roomNumber)) != nil)
         {
-            let days =  ValidInput.getCapacity(inputName      :" Enter the staying days : ")
-            let noOfGuest =  ValidInput.getCapacity(inputName :" Enter the no of guest  : ")
             let date : Date = ValidInput.getDate(inputName    :" Enter the Date         : ")
+            let days =  ValidInput.getCapacity(inputName      :" Enter the staying days : ")
             let dates : [Date] = Validation.generateDateArray(startDate: date, numberOfDays: days)
-            if bookingViewModel.isRoomAvailabilityChecking(roomNumber: roomNumber, startDate: dates.first! , endDate: dates.last!)
+           
+            if ((delegate?.isRoomAvailabilityChecking (roomNumber: roomNumber, startDate: dates.first! , endDate: dates.last!)) == true)
             {
-                
-                let roomBooking = bookingViewModel.addedConfirmingBooking(guest : guest, roomNumber: roomNumber, dates: dates, noOfGuest: noOfGuest)
+                let noOfGuest =  ValidInput.getCapacity(inputName :" Enter the no of guest  : ")
+                let roomBooking = bookingViewModel.addedConfirmBooking(guest : guest, roomNumber: roomNumber, dates: dates, noOfGuest: noOfGuest)
                 let paymentViewModel = PaymentViewModel()
                 let paymentView = PaymentView(paymentViewModel: paymentViewModel as PaymentViewModelService)
                 paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)

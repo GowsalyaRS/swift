@@ -25,8 +25,8 @@ public class LoginViewModel : LoginViewModelService
              checkGuestValidation(name: name, password: password)
          }
      }
-    func checkGuestValidation(name : String? ,password : String?)
-    {
+     func checkGuestValidation(name : String? ,password : String?)
+     {
         let guests = hotel.getGuests()
         for guest in guests.values
         {
@@ -46,5 +46,5 @@ public class LoginViewModel : LoginViewModelService
             }
         }
         ValidInput.alert (msg : "Invalid Username")
-    }
+     }
 }

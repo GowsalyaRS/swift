@@ -7,7 +7,7 @@ struct ValidInput
         {
             print (inputName,terminator: "")
             let name = readLine()!
-            if Validation.nameValidation(name : name)
+            if name.nameValidation(name : name)
             {
                 return name
             }
@@ -45,7 +45,7 @@ struct ValidInput
         {
             print (inputName,terminator: "")
             let address = readLine()!
-            if Validation.addressValidation(address: address)
+            if address.addressValidation(address: address)
             {
                 return address
             }
@@ -96,7 +96,7 @@ struct ValidInput
             print (inputName,terminator: "")
             if let capacitys = readLine(), let capacity = Int(capacitys)
             {
-                if Validation.capacityValidation(capacity: capacity)
+                if capacity.capacityValidation(capacity: capacity)
                 {
                     return capacity
                 }
@@ -153,7 +153,7 @@ struct ValidInput
             print (inputName,terminator: "")
             if let room_type = readLine(), let roomType = Int(room_type)
             {
-                if Validation.roomTypeValidation(roomType : roomType)
+                if roomType.roomTypeValidation(roomType : roomType)
                 {
                     return RoomType(rawValue: roomType)!
                 }
@@ -180,7 +180,7 @@ struct ValidInput
             print (inputName,terminator: "")
             if let bed_type = readLine(), let bedType = Int(bed_type)
             {
-                if Validation.bedTypeValidation(bedType : bedType)
+                if bedType.bedTypeValidation(bedType : bedType)
                 {
                     return BedType(rawValue: bedType)!
                 }
@@ -203,7 +203,7 @@ struct ValidInput
             print (inputName,terminator: "")
             if let amount = readLine(), let price = Float(amount)
             {
-                if Validation.priceValidation(price : price)
+                if price.priceValidation(price : price)
                 {
                     return price
                 }
@@ -245,7 +245,7 @@ struct ValidInput
             print (inputName,terminator: "")
             if let password = readLine()
             {
-                if  Validation.passwordValidation(password : password)
+                if  password.passwordValidation(password : password)
                 {
                     return password
                 }
@@ -284,7 +284,7 @@ struct ValidInput
             print (inputName,terminator: "")
             if let room = readLine(), let roomBooking = Int(room)
             {
-                if Validation.roomBookingValidation(roomBooking : roomBooking)
+                if roomBooking.roomBookingValidation(roomBooking : roomBooking)
                 {
                     return BookingStatus(rawValue : roomBooking)!
                 }
