@@ -9,7 +9,7 @@ class FeedbackViewModel : FeedbackViewModelService
     
     func isAvailableFeedback(booking: RoomBooking) -> Bool
     {
-        var feedback =  hotel.getFeedback(bookingId: booking.bookingIdProperty)
+        let feedback =  hotel.getFeedback(bookingId: booking.bookingIdProperty)
         if feedback == nil
         {
             return true

@@ -1,9 +1,9 @@
 protocol BookingViewService : AnyObject
 {
-    func  displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
     func  getInputBookingStatus()
     func  getInputCheckInBooking()
+    func  getInputCheckOutBooking()
     func  getInputCheckInBooking(booking : RoomBooking,totalAmount : Float)
     func  bookingAccess(guest : Guest)
-    func  getInputCheckOutBooking()
+    func  displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
 }

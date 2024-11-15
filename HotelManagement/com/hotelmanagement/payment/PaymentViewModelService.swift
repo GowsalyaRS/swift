@@ -4,6 +4,5 @@ protocol PaymentViewModelService : AnyObject
     func setPaymentView(paymentView: PaymentViewService)
     func setPaymentDetails (roomBooking : RoomBooking, amount : Float,paymentStatus : PaymentStatus)
     func getTotalAmount(roomBooking : RoomBooking) -> Float
-    func isPaymentChecking(roomBooking: RoomBooking) -> Bool
 }
 

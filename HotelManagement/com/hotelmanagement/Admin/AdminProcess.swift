@@ -21,7 +21,7 @@ struct AdminProcess
                        guestProcess()
                     case AdminOption.Booking_Details.rawValue:
                       bookingProcess()
-                   case AdminOption.FeedBack_Details.rawValue :
+                    case AdminOption.FeedBack_Details.rawValue :
                       FeedbackProcess()
                     case AdminOption.Back.rawValue:
                         return
@@ -67,4 +67,4 @@ struct AdminProcess
         feedbackView.displayFeedback(feedback: feedback)
     }
 }
-  
+

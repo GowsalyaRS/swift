@@ -4,7 +4,7 @@ class BookingView  : BookingViewService
     
     private unowned var bookingViewModel : BookingViewModelService
     private weak var delegate : RoomDelegation?
-    
+    private weak var  paymentDelegate : PaymentDelegation?
     init(bookingViewModel : BookingViewModelService)
     {
        self.bookingViewModel = bookingViewModel
@@ -14,6 +14,11 @@ class BookingView  : BookingViewService
     {
         self.delegate = delegate
     }
+    func setPaymentDelegate(paymentDelegate: PaymentDelegation)
+    {
+        self.paymentDelegate = paymentDelegate
+    }
+    
     func  bookingAccess(guest : Guest)
     {
         print ("Welcome  \(guest.nameProperty)) to  our Booking ")
@@ -205,7 +210,8 @@ class BookingView  : BookingViewService
                 let paymentViewModel = PaymentViewModel()
                 let paymentView = PaymentView(paymentViewModel:paymentViewModel as PaymentViewModelService )
                 paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
-                if paymentViewModel.isPaymentChecking(roomBooking  : booking!)
+                setPaymentDelegate(paymentDelegate: paymentViewModel)
+                if ((paymentDelegate?.isPaymentChecking(roomBooking  : booking!)) == true)
                 {
                     bookingViewModel.setCheckInDetails(booking: booking!)
                 }

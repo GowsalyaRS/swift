@@ -1,4 +1,4 @@
-class PaymentViewModel : PaymentViewModelService
+class PaymentViewModel : PaymentViewModelService, PaymentDelegation
 {
     private weak var paymentView : PaymentViewService?
     let hotel = HotelDataLayer.getInstance()
