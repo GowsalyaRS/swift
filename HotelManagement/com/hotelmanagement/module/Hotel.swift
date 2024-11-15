@@ -5,7 +5,7 @@ struct Hotel : CustomStringConvertible
      private var address             : String
      private var email               : String
      private var amenities           : [String]
-     private var bookingDiscount     : Float  = 0.20
+     private  var bookingDiscount     : Float  = 0.20
     
      init(hotelName: String, phoneNo: Int64, address: String, email: String, amenities: [String])
      {

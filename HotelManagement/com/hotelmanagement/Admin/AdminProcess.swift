@@ -44,7 +44,7 @@ struct AdminProcess
     
     func guestProcess()
     {
-        let guestViewModel : GuestViewModelService = GuestViewModel() as GuestViewModelService
+        let guestViewModel  = GuestViewModel() 
         let guestView   : GuestViewService = GuestView(guestViewModel: guestViewModel) as GuestViewService
         guestViewModel.setGuestView(guestView: guestView)
         guestView.displayGuestDetails(guests: HotelDataLayer.getInstance().getGuests())
@@ -52,7 +52,7 @@ struct AdminProcess
     
     func bookingProcess()
     {
-        let bookingViewModel : BookingViewModelService = BookingViewModel() as BookingViewModelService
+        let bookingViewModel  = BookingViewModel() 
         let bookingView   : BookingViewService = BookingView(bookingViewModel: bookingViewModel) as BookingViewService
         bookingViewModel.setBookingView(bookingView: bookingView)
         bookingView.getInputBookingStatus()
@@ -60,7 +60,7 @@ struct AdminProcess
    
     func FeedbackProcess()
     {
-        let feedbackViewModel  : FeedbackViewModelService = FeedbackViewModel()
+        let feedbackViewModel   = FeedbackViewModel()
         let feedbackView  : FeedbackViewService    = FeedbackView(feedbackViewModel: feedbackViewModel)
         feedbackViewModel.setFeedbackView(feedbackView)
         let feedback : [Feedback] = feedbackViewModel.getFeedback()

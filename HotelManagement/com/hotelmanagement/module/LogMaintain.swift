@@ -3,9 +3,6 @@ struct LogMaintain
 {
     private let bookingId : Int
     private var checkIn   : String
-    {
-        didSet { print("checkIn : \(checkIn)  successfully") }
-    }
     private var checkOut  : String
     {
         didSet { print("checkOut : \(checkOut)  successfully") }
@@ -21,6 +18,7 @@ struct LogMaintain
     init(bookingId : Int, checkIn : String)
     {
         self.init(bookingId: bookingId, checkIn: checkIn , checkOut: "")
+        print("checkIn : \(checkIn)  successfully")
     }
     
     mutating func setCheckOut(_ checkOut : String)

@@ -3,7 +3,6 @@ protocol BookingViewModelService : AnyObject
 {
     func getRoomBookingDetails(bookingStatus : BookingStatus)
     func getValidBooking (guest: Guest) -> [RoomBooking]
-    func setBookingView(bookingView: BookingViewService)
     func setCancellationDetails(booking: RoomBooking, cancellationReason: String)
     func setCheckInDetails(booking : RoomBooking)
     func setCheckoutDetails(booking : RoomBooking)
