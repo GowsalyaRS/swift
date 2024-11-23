@@ -1,15 +1,13 @@
 class FeedbackView : FeedbackViewService
 {
-    private unowned var feedbackViewModel  : FeedbackViewModelService
+    private  var feedbackViewModel  : FeedbackViewModelService
     
     init(feedbackViewModel: FeedbackViewModelService)
     {
         self.feedbackViewModel = feedbackViewModel
     }
-    
     func  getInputFeedbackDetails(booking: RoomBooking)
     {
-       
         if(feedbackViewModel.isAvailableFeedback(booking: booking) == false )
         {
             print ("Your added feedback already")

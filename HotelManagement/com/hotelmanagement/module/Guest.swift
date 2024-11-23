@@ -1,17 +1,29 @@
 struct Guest :  CustomStringConvertible
 {
     private static var count   = 1001
-    private var guestId        : Int
-    private var name           : String
+    private let guestId        : Int
+    private let name           : String
     private var phoneNo        : Int64
     private var address        : String
+    private var role           : GuestRole = .Guest
     init (name : String, phoneNo :Int64, address : String)
     {
-        guestId      = Guest.count
+        guestId       = Guest.count
         Guest.count  += 1
         self.name     = name
         self.phoneNo  = phoneNo
         self.address  = address
+    }
+    var roleProperty : GuestRole
+    {
+        get
+        {
+            return role
+        }
+        set
+        {
+            role = newValue
+        }
     }
     var guestIdProperty : Int
     {

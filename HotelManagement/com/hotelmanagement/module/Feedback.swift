@@ -2,10 +2,10 @@ import Foundation
 struct Feedback : CustomStringConvertible
 {
     static var  count = 1
-    let feedbackId    : Int
-    let date          : String
-    var rating        : Int
-    var comment       : String
+    private let feedbackId    : Int
+    private let date          : String
+    private var rating        : Int
+    private var comment       : String
     init (rating: Int, comment: String)
     {
         self.feedbackId = Feedback.count

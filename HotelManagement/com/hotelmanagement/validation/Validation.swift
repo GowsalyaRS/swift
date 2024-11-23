@@ -85,13 +85,9 @@ struct  Validation
     
     static func usernameValidation(name : String) ->  Bool
     {
-        for authendication in  HotelDataLayer.getInstance().getAllAuthendications().values
-        {
-            if(authendication.getUsername() == name)
-            {
-                return false
-            }
-        }
-        return true;
+        let matchingAuthendication = HotelDataLayer.getInstance().authendicationsProperty
+                .filter { $0.getUsername() == name }
+            
+        return matchingAuthendication.isEmpty
     }
 }

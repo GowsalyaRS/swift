@@ -1,5 +1,6 @@
 import Foundation
 
-var hotelProcess = HotelProcess()
-hotelProcess.hotelSetup()
-hotelProcess.hotelInit()
+let loginViewModel = LoginViewModel()
+let loginView  = LoginView(loginViewModel: loginViewModel)
+loginViewModel.setLoginView(loginView: loginView)
+loginView.LoginInit()

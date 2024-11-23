@@ -15,7 +15,7 @@ class RoomBooking :  CustomStringConvertible
                 print(" Booking is  \(bookingStatus) " )
             }
         }
-
+    
        init (roomNumber: Int, guestId: Int, noOfGuest: Int, roomBookingDate: [Date])
        {
             bookingId = RoomBooking.count
@@ -26,22 +26,20 @@ class RoomBooking :  CustomStringConvertible
             self.noOfGuest  = noOfGuest
             self.roomBookingDate = roomBookingDate
        }
-    
-      var roomBookingDateProperty: [Date]
-      {
-         return roomBookingDate
-      }
-      var roomNumberProperty: Int
-      {
-        return roomNumber
-      }
-      var bookingIdProperty: Int
-      {
-        return bookingId
-      }
-    
-      var bookingStatusProperty: BookingStatus
-      {
+       var roomBookingDateProperty: [Date]
+       {
+          return roomBookingDate
+       }
+       var roomNumberProperty: Int
+       {
+         return roomNumber
+       }
+       var bookingIdProperty: Int
+       {
+         return bookingId
+       }
+       var bookingStatusProperty: BookingStatus
+       {
           get
           {
               return bookingStatus
@@ -50,10 +48,9 @@ class RoomBooking :  CustomStringConvertible
           {
               bookingStatus = newValue
           }
-      }
-    
-      var description: String
-      {
+       }
+       var description: String
+       {
         return """
                 --------------------------------------
                 Booking Id    :  \(bookingId)
@@ -61,7 +58,7 @@ class RoomBooking :  CustomStringConvertible
                 No of Guest   :  \(noOfGuest), 
                 Booking Date  :  \(roomBookingDate)
                """
-      }
+       }
 }
 
 

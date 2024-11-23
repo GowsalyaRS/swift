@@ -1,5 +1,4 @@
-enum BookingGuestOption: Int, CaseIterable
+enum BookingGuestOption: Int,CaseIterable
 {
-    case RoomBooking = 1, BookingHistory , CancelBooking, cancelBookingHistory,WriteFeedback, Back
+    case  ListOfRoom = 1, RoomBooking ,BookingHistory, CancelBooking,CancelBookingHistory,WriteFeedback,Back
 }
-

@@ -1,6 +1,6 @@
 import Foundation
 protocol RoomDelegation: AnyObject
 {
-    func isRoomAvailabilityChecking(roomNumber: Int, startDate: Date, endDate: Date) -> Bool
-    func isValidRoomNumber(roomNumber : Int) -> Bool
+    func  isValidRoomNumber(roomId : Int) -> Bool
+    func isRoomAvailabilityChecking(roomId: Int, startDate: Date, endDate: Date) -> (Bool,Int)
 }

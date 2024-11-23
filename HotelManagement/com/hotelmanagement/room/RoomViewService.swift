@@ -1,5 +1,5 @@
 protocol RoomViewService : AnyObject
 {
-    func  roomAccess()
-    func  guestAccessRoom (guest : Guest)
+    func  getRoomSetupDetails()
+    func  viewRoomDetails(room  rooms :  [Int:Room])
 }

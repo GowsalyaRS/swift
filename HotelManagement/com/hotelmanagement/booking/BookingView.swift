@@ -1,15 +1,13 @@
 import Foundation
 class BookingView  : BookingViewService
 {
-    
-    private unowned var bookingViewModel : BookingViewModelService
+    private var bookingViewModel : BookingViewModelService
     private weak var delegate : RoomDelegation?
     private weak var  paymentDelegate : PaymentDelegation?
     init(bookingViewModel : BookingViewModelService)
     {
        self.bookingViewModel = bookingViewModel
     }
-    
     func setDelegate(delegate: RoomDelegation)
     {
         self.delegate = delegate
@@ -18,105 +16,22 @@ class BookingView  : BookingViewService
     {
         self.paymentDelegate = paymentDelegate
     }
-    
-    func  bookingAccess(guest : Guest)
-    {
-        print ("Welcome  \(guest.nameProperty)) to  our Booking ")
-        bookingInit(guest: guest)
-    }
-
-    func bookingInit(guest : Guest)
-    {
-         while (true)
-         {
-             print ("----------------------------------")
-             for  roomBooking in BookingGuestOption.allCases
-             {
-                 print (roomBooking.rawValue,".",roomBooking)
-             }
-             print ("----------------------------------")
-             print ("Enter your choice : " , terminator: "")
-             if let input = readLine(), let choice = Int(input)
-             {
-                 switch choice
-                 {
-                     case BookingGuestOption.RoomBooking.rawValue:
-                       let roomViewModel = RoomViewModel()
-                     let roomView = RoomView(roomViewModel: roomViewModel as RoomViewModelService )
-                     roomViewModel.setRoomView(roomView: roomView as RoomViewService)
-                     setDelegate(delegate: roomViewModel as RoomViewModel)
-                        getRoomBookingDetails(guest : guest)
-                     case BookingGuestOption.BookingHistory.rawValue:
-                        if let bookings = bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.confirmed)
-                        {
-                            displayRoomBookingDetails(bookings : bookings)
-                        }
-                        else
-                        {
-                           print ("No Booking History")
-                        }
-                     case BookingGuestOption.CancelBooking.rawValue:
-                     let validBooking : [RoomBooking] = bookingViewModel.getValidBooking (guest: guest)
-                     if validBooking.isEmpty
-                     {
-                        print ("No Avilable booking found")
-                        return
-                     }
-                     for booking in validBooking
-                     {
-                         print (booking)
-                     }
-                     getInputCancelBooking(booking: validBooking)
-                     case  BookingGuestOption.cancelBookingHistory.rawValue:
-                        if let bookings = bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.cancelled)
-                        {
-                           displayRoomBookingDetails(bookings : bookings)
-                        }
-                        else
-                        {
-                          print ("No Cancelling History")
-                        }
-                     case BookingGuestOption.WriteFeedback.rawValue:
-                         let bookingId =  getInputBookingId()
-                     guard bookingId > 0 else { print("Invalid booking id"); return}
-                     let (isValid , booking) = bookingViewModel.checkBooking(bookingId: bookingId)
-                      if isValid
-                      {
-                          let  feedbackViewModel = FeedbackViewModel()
-                          let feedbackView = FeedbackView(feedbackViewModel: feedbackViewModel)
-                          feedbackViewModel.setFeedbackView(feedbackView)
-                          feedbackView.getInputFeedbackDetails(booking: booking!)
-                      }
-                      else
-                      {
-                          print("Invalid booking id")
-                      }
-                     case BookingGuestOption.Back.rawValue:
-                     return
-                     default : print("Invalid choice")
-                 }
-             }
-             else
-             {
-                 print("Invalid input")
-             }
-         }
-    }
-    
     func  getRoomBookingDetails(guest : Guest)
     {
-           let roomNumber = ValidInput.getCapacity(inputName  :" Enter the room number   : ")
-          
-        if ((delegate?.isValidRoomNumber(roomNumber : roomNumber)) == true)
-        {
-            let date : Date = ValidInput.getDate(inputName    :" Enter the Date         : ")
+         let roomId  = ValidInput.getCapacity(inputName  :" Enter the room Id    : ")
+         if ((delegate?.isValidRoomNumber(roomId : roomId)) == true)
+         {
+            let date   = ValidInput.getDate(inputName    :" Enter the Date         : ")
+            if date == nil{  return  }
             let days =  ValidInput.getCapacity(inputName      :" Enter the staying days : ")
-            let dates : [Date] = Validation.generateDateArray(startDate: date, numberOfDays: days)
-           
-            if ((delegate?.isRoomAvailabilityChecking (roomNumber: roomNumber, startDate: dates.first! , endDate: dates.last!)) == true)
+            if days == 0 {  return }
+            let dates : [Date] = Validation.generateDateArray(startDate: date!, numberOfDays: days)
+            if let (isAvailable, roomNumber) = delegate?.isRoomAvailabilityChecking(roomId: roomId, startDate: dates.first!, endDate: dates.last!) , isAvailable == true
             {
                 let noOfGuest =  ValidInput.getCapacity(inputName :" Enter the no of guest  : ")
+                if noOfGuest == 0  { return }
                 let roomBooking = bookingViewModel.addedConfirmBooking(guest : guest, roomNumber: roomNumber, dates: dates, noOfGuest: noOfGuest)
+                print("Room Booking is Successfully. Your Room Number is : \(roomNumber)")
                 let paymentViewModel = PaymentViewModel()
                 let paymentView = PaymentView(paymentViewModel: paymentViewModel as PaymentViewModelService)
                 paymentViewModel.setPaymentView(paymentView: paymentView as PaymentViewService)
@@ -124,15 +39,14 @@ class BookingView  : BookingViewService
             }
             else
             {
-               print ("Room \(roomNumber) is already booked during the requested dates.")
+               print ("This Type of Room is already booked during the requested dates.")
             }
         }
         else
         {
-            print ("This room is not available")
+            print ("This room Id  is Invalid")
         }
     }
-    
     func displayRoomBookingDetails(bookings : [RoomBooking])
     {
         let paymentViewModel = PaymentViewModel()
@@ -145,13 +59,23 @@ class BookingView  : BookingViewService
             print (payment[booking.bookingIdProperty]!)
         }
     }
-    
     func getInputBookingStatus()
     {
-        let bookingStatus = ValidInput.getBookingStatus(inputName  : " Enter the booking status : ")
-        bookingViewModel.getRoomBookingDetails(bookingStatus : bookingStatus)
+        while true
+        {
+            let bookingStatus = ValidInput.getBookingStatus(inputName  : " Enter the booking status : ")
+            if bookingStatus == nil { return }
+            bookingViewModel.getRoomBookingDetails(bookingStatus : bookingStatus!)
+            print (" Press 1 to exit : ")
+            if let num : Int = Int.init(readLine()!)
+            {
+                if(num==1)
+                {
+                    break;
+                }
+            }
+        }
     }
-    
     func displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
     {
         if roomBookings.isEmpty
@@ -165,7 +89,6 @@ class BookingView  : BookingViewService
             print (roomBooking)
         }
     }
-    
     func getInputCancelBooking(booking : [RoomBooking])
     {
         print ("Enter the room number to cancel booking : ")
@@ -187,7 +110,6 @@ class BookingView  : BookingViewService
             print ("Invalid input")
         }
     }
-    
     func getInputBookingId() -> Int
     {
         print ("Enter the booking Id  : ")
@@ -197,7 +119,6 @@ class BookingView  : BookingViewService
         }
         return 0
     }
-    
     func getInputCheckInBooking()
     {
         let bookingId : Int  = getInputBookingId()
@@ -219,7 +140,7 @@ class BookingView  : BookingViewService
                 {
                     let amount = paymentViewModel.getTotalAmount (roomBooking: booking!)
                     print ("Your pending Amount is : \(amount)")
-                    getInputCheckInBooking(booking : booking! , totalAmount : amount)
+                    bookingViewModel.setCheckInDetails(booking: booking!)
                 }
             }
             else
@@ -232,25 +153,6 @@ class BookingView  : BookingViewService
             print ("Booking not found")
         }
     }
-    
-    func  getInputCheckInBooking(booking : RoomBooking ,totalAmount : Float)
-    {
-        print ("Enter the Amount to be paid : ")
-        guard let amount : Float = Float.init(readLine()!)else
-        {
-            print ("Invalid Amount")
-            return
-        }
-        if amount == totalAmount
-        {
-            bookingViewModel.setCheckInDetails(booking: booking)
-        }
-        else
-        {
-            print ("Invalid Amount ")
-        }
-    }
-    
     func  getInputCheckOutBooking()
     {
         let bookingId : Int  = getInputBookingId()

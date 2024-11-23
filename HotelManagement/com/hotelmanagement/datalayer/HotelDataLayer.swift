@@ -1,19 +1,24 @@
 class HotelDataLayer
 {
     private static var hotelDataLayer : HotelDataLayer? = nil
-    private var hotel                 : Hotel?
     private var rooms                 : [Int : Room] = [:]
     private var guests                : [Int64 : Guest] = [:]
-    private var authendications       : [Int : GuestAuthentication] = [:]
+    private var authendications       : [GuestAuthentication] = []
     private var roomReservations      : [Int : [RoomBooking]] = [:] // roomnumber
     private var guestReservations     : [Int : [RoomBooking]] = [:] // guest
     private var paymentDetails        : [Int : Payment] = [:]
+    private var hotelRooms            : [HotelRoom] = []
     private var cancelBooking         : [Int : RoomCancellation] = [:]
     private var booking               : [Int : RoomBooking] = [:]
-    private var logMaintain           : [Int : LogMaintain] = [:]   // BookingId
+    private var logMaintain           : [Int : LogMaintain] = [:]  // BookingId
     private var feedback              : [Int : Feedback] = [:]    // bookingId
     private init()
     {
+        var guest = Guest (name: "Amirtha", phoneNo: 9876543210, address: "KK Nagar Madurai")
+        guest.roleProperty = .Admin
+        guests[guest.phoneNoProperty] = guest
+        let authendication = GuestAuthentication(guestId: guest.guestIdProperty,  username: "zoho", password: "123")
+        authendications.append(authendication)
     }
     public static func getInstance() -> HotelDataLayer
     {
@@ -23,16 +28,25 @@ class HotelDataLayer
         }
         return hotelDataLayer!
     }
-    var hotelProperty : Hotel
+    var roomsProperty : [Int : Room]
     {
-        get
-        {
-            return hotel! 
-        }
-        set
-        {
-            hotel = newValue
-        }
+        get { return rooms }
+        set { rooms = newValue }
+    }
+    var guestProperty : [Int64 : Guest]
+    {
+        get { return guests }
+        set { guests = newValue }
+    }
+    var authendicationsProperty : [GuestAuthentication]
+    {
+        get { return authendications }
+        set { authendications = newValue }
+    }
+    var  hotelRoomsProperty  : [HotelRoom]
+    {
+        get { return hotelRooms }
+        set { hotelRooms = newValue }
     }
     func getFeedback(bookingId : Int) -> Feedback?
     {
@@ -55,61 +69,28 @@ class HotelDataLayer
     {
         return logMaintain[bookingId]
     }
-    func addRooms(room : Room)
+    var paymentDetailsProperty : [Int : Payment]
     {
-        rooms[room.getRoomNumber()] = room 
+        get { return paymentDetails }
+        set { paymentDetails = newValue }
     }
-    func getRooms() -> [Int : Room]
+    var bookingProperty : [Int : RoomBooking]
     {
-        return rooms
+        get { return booking }
+        set { booking = newValue }
     }
-    func addGuest (guest : Guest)
+    var cacelBookingProperty : [Int : RoomCancellation]
     {
-        guests[guest.phoneNoProperty] = guest
+        get { return cancelBooking }
+        set { cancelBooking = newValue }
     }
-    func getGuests() -> [Int64 : Guest]
+    func getGuestBookings(guestNumber: Int) -> [RoomBooking]
     {
-        return guests
+        return guestReservations[guestNumber] ?? []
     }
-    func getPaymentDetails() -> [Int : Payment]
+    func getRoomBookings(roomNumber : Int) -> [RoomBooking]
     {
-        return paymentDetails
-    }
-    func setPaymentDetails(payment : Payment)
-    {
-        paymentDetails[payment.bookingIdProperty] = payment
-    }
-    func getBooking (bookingId : Int) -> RoomBooking?
-    {
-         return booking[bookingId]
-    }
-    func setBooking(booking : RoomBooking)
-    {
-        self.booking[booking.bookingIdProperty] = booking
-    }
-    func setAuthendication(guestAuthentication : GuestAuthentication)
-    {
-        authendications[guestAuthentication.getGuestId()] = guestAuthentication
-    }
-    func getCancelBooking() -> [Int : RoomCancellation]
-    {
-        return cancelBooking
-    }
-    func setCancelBooking(cancelBooking : RoomCancellation)
-    {
-        self.cancelBooking[cancelBooking.bookingId] = cancelBooking
-    }
-    func getAuthendication (guestId : Int) -> GuestAuthentication?
-    {
-        return authendications[guestId] ?? nil
-    }
-    func getAllAuthendications() ->  [Int :GuestAuthentication]
-    {
-        return authendications
-    }
-    func getBookings(guestNumber: Int) -> [RoomBooking]?
-    {
-        return guestReservations[guestNumber]
+       return roomReservations[roomNumber] ?? []
     }
     func addBooking(roomNumber : Int , booking: RoomBooking)
     {
@@ -134,21 +115,5 @@ class HotelDataLayer
         {
           guestReservations[guestId] = [booking]
         }
-    }
-    func getRoomBookings(roomNumber: Int, bookingStatus: BookingStatus) -> [RoomBooking]
-    {
-        if let bookings = roomReservations[roomNumber]
-        {
-            return bookings.filter { $0.bookingStatusProperty == bookingStatus }
-        }
-        return []
-    }
-    func getGuestBookings(guestNumber: Int,bookingStatus: BookingStatus) -> [RoomBooking]
-    {
-        if let bookings = guestReservations[guestNumber]
-        {
-            return bookings.filter { $0.bookingStatusProperty == bookingStatus }
-        }
-        return []
     }
 }

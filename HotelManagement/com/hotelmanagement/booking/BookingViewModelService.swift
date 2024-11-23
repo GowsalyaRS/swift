@@ -7,7 +7,7 @@ protocol BookingViewModelService : AnyObject
     func setCheckInDetails(booking : RoomBooking)
     func setCheckoutDetails(booking : RoomBooking)
     func isAvailableCheckOut(bookingId : Int) -> (Bool,RoomBooking?)
-    func isAvailableBookingHistory (guest : Guest , bookingStatus : BookingStatus) -> [RoomBooking]?
+    func isAvailableBookingHistory (guest : Guest , bookingStatus : BookingStatus) -> [RoomBooking]
     func addedConfirmBooking (guest : Guest, roomNumber: Int, dates: [Date], noOfGuest: Int) -> RoomBooking
     func isValidBooking(roomBookings : [RoomBooking] , roomNumber : Int) -> RoomBooking?
     func checkBooking(bookingId: Int) -> (Bool,RoomBooking?)

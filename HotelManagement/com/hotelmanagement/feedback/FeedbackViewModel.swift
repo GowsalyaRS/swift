@@ -6,7 +6,6 @@ class FeedbackViewModel : FeedbackViewModelService
     {
         self.feedbackView  = feedbackView
     }
-    
     func isAvailableFeedback(booking: RoomBooking) -> Bool
     {
         let feedback =  hotel.getFeedback(bookingId: booking.bookingIdProperty)
@@ -16,7 +15,6 @@ class FeedbackViewModel : FeedbackViewModelService
         }
         return false
     }
-    
     func isValidWriteFeedback(booking: RoomBooking) -> Bool
     {
         if booking.bookingStatusProperty == .checkout
@@ -25,13 +23,11 @@ class FeedbackViewModel : FeedbackViewModelService
         }
         return false
     }
-    
     func createFeedback(bookingId : Int , rating : Int , comment : String)
     {
         let feedback : Feedback = Feedback(rating: rating, comment: comment)
         hotel.addFeedback(bookingId: bookingId, feedback: feedback)
     }
-    
     func getFeedback() -> [Feedback]
     {
         return hotel.getAllFeedback()

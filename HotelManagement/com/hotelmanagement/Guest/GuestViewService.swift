@@ -1,5 +1,5 @@
 protocol GuestViewService : AnyObject
 {
-    func displayGuestDetails(guests : [Int64 : Guest])
     func inputGetGuestSignupDetails()
+    func displayGuestDetails(guests : [Int64 : Guest])
 }

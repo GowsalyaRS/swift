@@ -2,12 +2,10 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
 {
     private weak var paymentView : PaymentViewService?
     let hotel = HotelDataLayer.getInstance()
-    
     func setPaymentView(paymentView: PaymentViewService)
     {
         self.paymentView = paymentView
     }
-    
     func isValidAmount(amount: Float , totalPrice : Float) -> Bool
     {
         if amount == totalPrice
@@ -16,34 +14,34 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
         }
         return false
     }
-    
     func calculateAmount(roomNumber : Int )  -> Float
     {
-        var price =  hotel.getRooms()[roomNumber]?.priceProperty
-        if price == nil
+        var roomIds =  hotel.hotelRoomsProperty.filter { $0.roomNumberProperty == roomNumber }
+        var price : Float = 0
+        if let roomId =  roomIds.first?.roomIdProperty
         {
-            return 0
+            var room  = hotel.roomsProperty.filter { $0.value.roomIdProperty == roomId }.first
+            price = room?.value.roomPriceProperty ?? 0
         }
-        let discount = (hotel.hotelProperty.bookingDiscountProperty *  price!)
-        price! += ( price! * 0.05 ) - discount
-        ValidInput.alert(msg : "Your Discount  Amount  is : \(discount)")
-        return price!
+        if(price == 0)
+        {
+             return 0
+        }
+        price += ( price * 0.05 )
+        return price
     }
-    
     func setPaymentDetails (roomBooking : RoomBooking, amount : Float,paymentStatus : PaymentStatus)
     {
         let payment = Payment (bookingId: roomBooking.bookingIdProperty, paymentStatus: paymentStatus, totalAmount: amount)
-        hotel.setPaymentDetails(payment: payment)
+        hotel.paymentDetailsProperty [roomBooking.bookingIdProperty] = payment
     }
-    
     func getPayementDetails() -> [Int : Payment]
     {
-        return hotel.getPaymentDetails()
+        return hotel.paymentDetailsProperty
     }
-    
     func isPaymentChecking(roomBooking: RoomBooking) -> Bool
     {
-         let payments : [Int:Payment] =  hotel.getPaymentDetails()
+         let payments : [Int:Payment] =  hotel.paymentDetailsProperty
          let payment = payments[roomBooking.bookingIdProperty]
          if payment?.paymentStatusProperty == PaymentStatus.Success
          {
@@ -51,10 +49,9 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
          }
         return false
     }
-    
     func getTotalAmount(roomBooking : RoomBooking) -> Float
     {
-        let payments : [Int:Payment] =  hotel.getPaymentDetails()
+        let payments : [Int:Payment] =  hotel.paymentDetailsProperty
         let payment = payments[roomBooking.bookingIdProperty]
         return  payment?.totalAmountProperty ?? 0
     }
