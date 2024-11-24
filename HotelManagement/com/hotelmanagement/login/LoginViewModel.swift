@@ -22,6 +22,9 @@ public class LoginViewModel : LoginViewModelService
                    }
                 }
          }
-         ValidInput.alert(msg: "Invalid Username or Password")
+         else
+         {
+             ValidInput.alert(msg: "Invalid Username or Password")
+         }
      }
 }

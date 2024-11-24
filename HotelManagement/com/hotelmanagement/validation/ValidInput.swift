@@ -19,7 +19,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -43,11 +43,11 @@ struct ValidInput
             }
             else
             {
-                print ("Please enter a valid name")
+                print ("Please enter a valid Input")
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -81,7 +81,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -109,7 +109,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -137,7 +137,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -149,30 +149,19 @@ struct ValidInput
     }
     static func getAmenities (inputName : String) -> [String]
     {
-        var count = 0
         var amenities : [String] = []
         while (true)
         {
             print (inputName,terminator: "")
-            count += 1
             let amenitie = readLine()!
             if !amenitie.isEmpty
             {
                 amenities.append(amenitie)
             }
-            print("Enter 1 to enter to finish",terminator: "")
-            if readLine() == "1"
+            print("Press 0 to exit, any other key to continue  : ",terminator: "")
+            if readLine() == "0"
             {
                 return amenities
-            }
-            if(count % 2 == 0)
-            {
-                print("Press 0  to Exit")
-                let num : String? = readLine()
-                if num == "0"
-                {
-                    break ;
-                }
             }
         }
         return []
@@ -201,7 +190,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -243,7 +232,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -281,7 +270,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -315,7 +304,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -341,12 +330,12 @@ struct ValidInput
                 }
                 else
                 {
-                    ValidInput.alert(msg : "Please enter a valid date or Booking only after 1 month")
+                    ValidInput.alert(msg : "Please enter a valid date. Bookings can only be made after one month")
                 }
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -376,7 +365,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -404,7 +393,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {
@@ -420,10 +409,17 @@ struct ValidInput
         var count = 0
         while (true)
         {
+            print ("--------------------------------------------")
             for roomBooking in BookingStatus.allCases
             {
+                if (roomBooking.rawValue == 1)
+                {
+                    print ("\(roomBooking.rawValue) . All Booking")
+                    continue
+                }
                 print ("\(roomBooking.rawValue) . \(roomBooking)")
             }
+            print ("--------------------------------------------")
             print (inputName,terminator: "")
             count += 1
             if let room = readLine(), let roomBooking = Int(room)
@@ -443,7 +439,7 @@ struct ValidInput
             }
             if(count % 2 == 0)
             {
-                print("Press 0  to Exit")
+                print("Press 0 to exit, any other key to continue")
                 let num : String? = readLine()
                 if num == "0"
                 {

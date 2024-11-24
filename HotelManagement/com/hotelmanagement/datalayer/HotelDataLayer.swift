@@ -14,7 +14,7 @@ class HotelDataLayer
     private var feedback              : [Int : Feedback] = [:]    // bookingId
     private init()
     {
-        var guest = Guest (name: "Amirtha", phoneNo: 9876543210, address: "KK Nagar Madurai")
+        var guest = Guest (name: "Yugan", phoneNo: 9876543210, address: "KK Nagar Madurai")
         guest.roleProperty = .Admin
         guests[guest.phoneNoProperty] = guest
         let authendication = GuestAuthentication(guestId: guest.guestIdProperty,  username: "zoho", password: "123")

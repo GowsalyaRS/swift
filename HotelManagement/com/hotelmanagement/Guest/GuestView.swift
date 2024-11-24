@@ -8,11 +8,15 @@ class GuestView : GuestViewService
     func inputGetGuestSignupDetails()
     {
         let phoneNo  = ValidInput.getPhoneNo(inputName :"Enter your phone number : ")
+        if phoneNo == 0 { return }
         if  guestViewModel.isAvailablePhoneNo(phoneNo : phoneNo)
         {
             let name     = ValidInput.getName   (inputName :"Enter your name         : ")
+            if name.isEmpty { return }
             let address  = ValidInput.getAddress(inputName :"Enter your address      : ")
+            if address.isEmpty { return }
             let userNamePassword  = inputGetAuthendicationDetails()
+            if userNamePassword.username.isEmpty || userNamePassword.password.isEmpty { return }
             let guest = guestViewModel.createGuest(name : name, phoneNo: phoneNo, address: address)
             guestViewModel.createAuthendication(guestId : guest.guestIdProperty, username : userNamePassword.username, password: userNamePassword.password)
             print ("Guest Added Successfully :  Your Guest Id is \(guest.guestIdProperty)")
@@ -26,7 +30,9 @@ class GuestView : GuestViewService
     func inputGetAuthendicationDetails() -> (username: String, password: String)
     {
         let username = ValidInput.getusername(inputName : "Enter your username    : ")
+        if username.isEmpty { return (username: "", password: "") }
         let password = ValidInput.getPassword(inputName : "Enter your password    : ")
+        if password.isEmpty { return (username: "", password: "") }
         return (username: username, password: password)
     }
     func displayGuestDetails(guests : [Int64 : Guest])
@@ -71,7 +77,7 @@ class GuestView : GuestViewService
                        cancelBookingHistory(guest : guest)
                      case BookingGuestOption.WriteFeedback.rawValue:
                         writeFeedback(guest : guest)
-                     case BookingGuestOption.Back.rawValue:
+                     case BookingGuestOption.LogOut.rawValue:
                      return
                      default : print("Invalid choice")
                  }

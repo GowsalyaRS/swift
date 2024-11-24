@@ -19,9 +19,10 @@ class BookingView  : BookingViewService
     func  getRoomBookingDetails(guest : Guest)
     {
          let roomId  = ValidInput.getCapacity(inputName  :" Enter the room Id    : ")
+         if roomId == 0 {  return  }
          if ((delegate?.isValidRoomNumber(roomId : roomId)) == true)
          {
-            let date   = ValidInput.getDate(inputName    :" Enter the Date         : ")
+           let date   = ValidInput.getDate(inputName :" Enter the Date (dd-mm-yyyy)  :")
             if date == nil{  return  }
             let days =  ValidInput.getCapacity(inputName      :" Enter the staying days : ")
             if days == 0 {  return }
@@ -65,11 +66,16 @@ class BookingView  : BookingViewService
         {
             let bookingStatus = ValidInput.getBookingStatus(inputName  : " Enter the booking status : ")
             if bookingStatus == nil { return }
+            if (bookingStatus == .pending)
+            {
+                bookingViewModel.getRoomBookingDetails()
+                return
+            }
             bookingViewModel.getRoomBookingDetails(bookingStatus : bookingStatus!)
-            print (" Press 1 to exit : ")
+            print ("Press 0 to exit, any other key to continue ")
             if let num : Int = Int.init(readLine()!)
             {
-                if(num==1)
+                if(num == 0)
                 {
                     break;
                 }
@@ -91,10 +97,9 @@ class BookingView  : BookingViewService
     }
     func getInputCancelBooking(booking : [RoomBooking])
     {
-        print ("Enter the room number to cancel booking : ")
-        if let roomNumber : Int = Int.init(readLine()!)
-        {
-            if let booking : RoomBooking =  bookingViewModel.isValidBooking(roomBookings : booking, roomNumber: roomNumber)
+        let bookingId =   getInputBookingId()
+        if bookingId == 0 { return } 
+            if let booking : RoomBooking =  bookingViewModel.isValidBooking(guestBookings : booking, bookingId : bookingId)
             {
                 print ("Enter the reason of cancellation  : ")
                 let cancellationReason = readLine()!
@@ -102,13 +107,8 @@ class BookingView  : BookingViewService
             }
             else
             {
-                print ("Room number not found")
+                print ("Room Id is not valid")
             }
-        }
-        else
-        {
-            print ("Invalid input")
-        }
     }
     func getInputBookingId() -> Int
     {

@@ -10,7 +10,7 @@ struct Feedback : CustomStringConvertible
     {
         self.feedbackId = Feedback.count
         Feedback.count += 1
-        self.date       = Validation.convertDateToString(date: Date())!
+        self.date       = Validation.convertDateToString(formate:"yyyy-MM-dd",date: Date())!
         self.rating     = rating
         self.comment    = comment
     }

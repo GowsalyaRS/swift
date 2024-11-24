@@ -4,28 +4,24 @@ struct  Validation
 {
     private static let format: String = "dd-MM-yyyy"
     private static let dateFormatter = DateFormatter()
-    
     static func emailValidation(email : String) -> Bool
     {
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         return emailTest.evaluate(with: email)
     }
-    
     static func phoneValidation(phoneNo : String) -> Bool
     {
         let phoneRegex = "^(\\+91[\\s\\-]?)?([6-9]{1}[0-9]{9})$"
         let phoneTest = NSPredicate(format: "SELF MATCHES %@", phoneRegex)
         return phoneTest.evaluate(with: phoneNo)
     }
-    
     static func hashPassword(password: String) -> String
     {
         let data = Data(password.utf8)
         let hash = SHA256.hash(data: data)
         return hash.map { String(format: "%02x", $0) }.joined()
     }
-    
     static func isValidConvertDate(dateString: String) -> (Bool,Date?)
     {
         dateFormatter.dateFormat = format
@@ -46,7 +42,6 @@ struct  Validation
         }
         return (false, nil)
     }
-    
     static func generateDateArray(startDate: Date, numberOfDays: Int) -> [Date]
     {
         let calendar = Calendar.current
@@ -60,7 +55,6 @@ struct  Validation
         }
         return dates
     }
-
     static func convertDate(date: Date) -> Date?
     {
         dateFormatter.dateFormat = format
@@ -72,22 +66,23 @@ struct  Validation
               return date
         }
          return nil
-     }
-    
-    static func convertDateToString(date: Date) -> String?
+    }
+    static func convertDateToString(formate : String,date: Date) -> String?
     {
-        dateFormatter.dateFormat = "yyyy-MM-dd hh:mm a"
+        dateFormatter.dateFormat = formate
         dateFormatter.timeZone = TimeZone(identifier: "Asia/Kolkata")
-        let currentDate = Date()
+        let currentDate = date
         let istDateString = dateFormatter.string(from: currentDate)
         return istDateString
     }
-    
     static func usernameValidation(name : String) ->  Bool
     {
+        if name.count < 2 || name.isEmpty
+        {
+            return false
+        }
         let matchingAuthendication = HotelDataLayer.getInstance().authendicationsProperty
                 .filter { $0.getUsername() == name }
-            
         return matchingAuthendication.isEmpty
     }
 }

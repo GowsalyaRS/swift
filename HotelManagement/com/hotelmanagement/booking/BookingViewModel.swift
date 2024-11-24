@@ -37,6 +37,16 @@ class BookingViewModel : BookingViewModelService
             bookingView!.displayBookingDetails(roomBookings: validBooking,roomNumber : roomNumber)
         }
     }
+    func getRoomBookingDetails()
+    {
+        let rooms  =  hotel.hotelRoomsProperty
+        for room in rooms
+        {
+            let roomNumber =  room.roomNumberProperty
+            let bookings = hotel.getRoomBookings(roomNumber: roomNumber)
+            bookingView!.displayBookingDetails(roomBookings: bookings,roomNumber : roomNumber)
+        }
+    }
     func getValidBooking (guest: Guest) -> [RoomBooking]
     {
         let bookings =  hotel.getGuestBookings(guestNumber: guest.guestIdProperty)
@@ -46,11 +56,11 @@ class BookingViewModel : BookingViewModelService
         }
         return bookings.filter { $0.bookingStatusProperty == .confirmed }
     }
-    func isValidBooking(roomBookings : [RoomBooking] , roomNumber : Int) -> RoomBooking?
+    func isValidBooking(guestBookings : [RoomBooking] , bookingId : Int) -> RoomBooking?
     {
-        for roomBook in roomBookings
+        for roomBook in guestBookings
         {
-            if roomBook.roomNumberProperty == roomNumber
+            if roomBook.bookingIdProperty == bookingId && roomBook.bookingStatusProperty == .confirmed
             {
                 let date : [Date] =  roomBook.roomBookingDateProperty
                 if (date.first != nil && date.first! > Date())
@@ -101,7 +111,7 @@ class BookingViewModel : BookingViewModelService
         if var room = filteredRooms.first
         {
             room.changeAvailability(false)
-            let currentDate = Validation.convertDateToString(date: Date())
+            let currentDate = Validation.convertDateToString(formate:"yyyy-MM-dd",date: Date())
             let log =  LogMaintain(bookingId : booking.bookingIdProperty , checkIn : currentDate!)
             hotel.addLog(bookingId: booking.bookingIdProperty,log: log)
         }
@@ -115,7 +125,7 @@ class BookingViewModel : BookingViewModelService
         {
             room.changeAvailability(true)
             var log =  hotel.getLog(bookingId: booking.bookingIdProperty)!
-            log.setCheckOut(Validation.convertDateToString(date: Date())!)
+            log.setCheckOut(Validation.convertDateToString(formate:"yyyy-MM-dd",date: Date())!)
             hotel.addLog(bookingId: booking.bookingIdProperty,log: log)
         }
     }

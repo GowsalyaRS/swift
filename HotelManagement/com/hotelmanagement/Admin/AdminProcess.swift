@@ -3,7 +3,7 @@ struct AdminProcess
     func adminInit(guest : Guest)
     {
         print("\t\t---------------------------------------------")
-        print ("\t\t\tWelcome \(guest.nameProperty) to the Admin ")
+        print ("\t\t\tWelcome, \(guest.nameProperty) You have access to the Admin interface now ")
         print("\t\t----------------------------------------------")
         while (true)
         {
@@ -26,7 +26,11 @@ struct AdminProcess
                       bookingProcess()
                     case AdminOption.FeedBack_Details.rawValue :
                       FeedbackProcess()
-                    case AdminOption.Back.rawValue:
+                     case AdminOption.Room_Booking_Checkout.rawValue :
+                      checkout()
+                    case AdminOption.Room_Booking_Checkin.rawValue  :
+                      checkin()
+                    case AdminOption.LogOut.rawValue:
                         return
                     default : print("Invalid choice")
                 }
@@ -56,10 +60,6 @@ struct AdminProcess
                       addRooms()
                     case RoomAdminOption.View_Rooms_Details.rawValue :
                        roomDetails()
-                    case RoomAdminOption.Room_Booking_Checkout.rawValue :
-                       checkout()
-                    case RoomAdminOption.Room_Booking_Checkin.rawValue  :
-                       checkin()
                     case RoomAdminOption.Back.rawValue :
                         return
                     default : print("Invalid choice")

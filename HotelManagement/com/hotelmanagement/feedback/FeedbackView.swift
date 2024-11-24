@@ -1,7 +1,6 @@
 class FeedbackView : FeedbackViewService
 {
     private  var feedbackViewModel  : FeedbackViewModelService
-    
     init(feedbackViewModel: FeedbackViewModelService)
     {
         self.feedbackViewModel = feedbackViewModel
@@ -15,7 +14,7 @@ class FeedbackView : FeedbackViewService
         }
         if (feedbackViewModel.isValidWriteFeedback(booking: booking) == false)
         {
-           print ("feedback only writing stayed people")
+           print ("The feedback is solely for those who stayed")
            return
         }
         var rating  = 0
@@ -41,7 +40,6 @@ class FeedbackView : FeedbackViewService
         feedbackViewModel.createFeedback(bookingId: booking.bookingIdProperty, rating: rating, comment: feedback)
         print (" Feedback added successfully ")
     }
-    
     func displayFeedback(feedback: [Feedback])
     {
         if feedback.isEmpty
