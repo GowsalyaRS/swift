@@ -2,8 +2,8 @@ import Foundation
 import CryptoKit
 struct  Validation
 {
-    private static let format: String = "dd-MM-yyyy"
     private static let dateFormatter = DateFormatter()
+    private static let format = "dd-MM-yyyy"
     static func emailValidation(email : String) -> Bool
     {
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -58,18 +58,25 @@ struct  Validation
     static func convertDate(formate : String ,date: Date) -> Date?
     {
         dateFormatter.dateFormat = formate
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         if let date : Date = dateFormatter.date(from:  dateFormatter.string(from: date))
         {
               return date
         }
          return nil
     }
-    static func convertDateToString(formate : String,date: Date) -> String?
+    static func convertStringToDate(formate : String,date: String) -> Date?
     {
         dateFormatter.dateFormat = formate
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Kolkata")
+        if let date : Date = dateFormatter.date(from: date)
+        {
+            return date
+        }
+        return nil
+    }
+    static func convertDateToString(formate : String,date: Date) -> String?
+    {
+        dateFormatter.timeZone = TimeZone(identifier: "IST")
+        dateFormatter.dateFormat = formate
         let istDateString = dateFormatter.string(from: date)
         return istDateString
     }
@@ -81,5 +88,15 @@ struct  Validation
         }
         let matchingAuthendication = HotelDataLayer.getInstance().executeQueryData(query: "select * from guest_authentication where username = '\(name.replacingOccurrences(of: "'", with: ""))'")
         return (matchingAuthendication?.isEmpty ?? false)
+    }
+    static func findError(dataBaseError : DatabaseError , msg : String)
+    {
+        switch dataBaseError
+        {
+             case .dataInsertionFailed(msg) : print(msg)
+             case .queryExecutionFailed(msg) : print (msg)
+             case .tableCreationFailed(msg) : print (msg)
+             default : print ("Unknown error")
+        }
     }
 }

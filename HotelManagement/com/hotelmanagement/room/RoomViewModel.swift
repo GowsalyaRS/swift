@@ -19,9 +19,8 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
         for _ in 0..<noOfRoom
         {
             let hotelRoom = HotelRoom(roomId: room.roomIdProperty)
-            hotel.hotelRoomsProperty.append(hotelRoom)
              query = "INSERT INTO hotel_rooms(roomNumber,roomId) VALUES     (\(hotelRoom.roomNumberProperty),\(hotelRoom.roomIdProperty))"
-            print (hotel.insertRecord(query: query))
+            hotel.insertRecord(query: query)
         }
     }
     func isRoomChecking() -> (Bool,[Room])
@@ -53,36 +52,62 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
             }
         }
         return (true,roomsArray)
-    }
-    func isRoomAvailabilityChecking(roomId : Int, startDate: Date, endDate: Date) ->(Bool,Int)
+     }
+    func isRoomAvailabilityChecking(roomId: Int, startDate: Date, endDate: Date) -> (Bool, Int)
     {
-        let hotelRooms = hotel.hotelRoomsProperty.filter({$0.roomIdProperty == roomId})
-        for hotelRoom in hotelRooms
+        let query = """
+                    SELECT hotel_rooms.roomNumber
+                    FROM hotel_rooms
+                    WHERE hotel_rooms.roomId = \(roomId)
+                    """
+        if let roomNumbers = hotel.executeQueryData(query: query)
         {
-            let bookings = (hotel.getRoomBookings(roomNumber : hotelRoom.roomNumberProperty).filter { $0.bookingStatusProperty == .confirmed })
-            var flag = true
-            for booking in bookings
-            {
-                let bookingDate = booking.roomBookingDateProperty
-                if (!bookingDate.isEmpty)
+            print(roomNumbers)
+            for room in roomNumbers {
+                if let roomNumber = room["roomNumber"] as? Int
                 {
-                    if (startDate < bookingDate.last! && endDate > bookingDate.first!)
+                    print("Checking availability for room number: \(roomNumber)")
+                    let bookingQuery = """
+                                       SELECT bookingStartDate, bookingEndDate
+                                       FROM booking
+                                       WHERE roomNumber = \(roomNumber)
+                                       AND bookingStatusId = \(BookingStatus.confirmed.rawValue)
+                                       """
+                    if let bookings = hotel.executeQueryData(query: bookingQuery) 
                     {
-                        flag = false
-                        break;
+                        var isAvailable = true
+                    
+                        if bookings.isEmpty
+                        {
+                            return (true, roomNumber)
+                        }
+                       
+                        for booking in bookings
+                        {
+                            if let bookingStartString = booking["bookingStartDate"] as? String,
+                               let bookingEndString = booking["bookingEndDate"] as? String,
+                               let bookingStart = Validation.convertStringToDate(formate: "dd-MM-yyyy", date:bookingStartString ),
+                               let bookingEnd = Validation.convertStringToDate(formate: "dd-MM-yyyy", date: bookingEndString )
+                            {
+                                if startDate < bookingEnd && endDate > bookingStart
+                                {
+                                    isAvailable = false
+                                    break
+                                }
+                            }
+                        }
+                        if isAvailable {
+                            return (true, roomNumber)
+                        }
                     }
                 }
             }
-            if flag
-            {
-                return (true,hotelRoom.roomNumberProperty)
-            }
         }
-        return (false,0)
+        return (false, 0)
     }
     func  isValidRoomNumber(roomId : Int) -> Bool
     {
-        let rooms = hotel.executeQueryData(query: "SELECT * FROM Room WHERE roomId = \(roomId)")
-        return (rooms?.isEmpty) ?? false
+        let rooms = hotel.executeQueryData(query: "SELECT * FROM Rooms WHERE roomId = \(roomId)")
+        return (!(rooms?.isEmpty ?? false))
     }
 }

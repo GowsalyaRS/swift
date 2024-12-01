@@ -5,7 +5,7 @@ protocol BookingViewService : AnyObject
     func  getInputCheckOutBooking()
     func  getInputBookingId() -> Int
     func  getInputCancelBooking(booking : [RoomBooking])
-    func  getRoomBookingDetails(guest : Guest)
+    func  getRoomBookingDetails(guest : Guest) throws
     func  displayRoomBookingDetails(bookings : [RoomBooking])
-    func  displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
+    func  displayBookingDetails(roomBookings : [RoomBooking])
 }

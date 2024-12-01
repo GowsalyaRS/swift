@@ -8,6 +8,7 @@ class RoomBooking :  CustomStringConvertible
     private  let guestId         : Int
     private var noOfGuest        : Int
     private let roomBookingDate  : [Date]
+    private let stayingDays      : Int
     private var bookingStatus    : BookingStatus = .pending
     {
         didSet
@@ -15,15 +16,27 @@ class RoomBooking :  CustomStringConvertible
             print(" Booking is  \(bookingStatus) " )
         }
     }
-    init (roomNumber: Int, guestId: Int, noOfGuest: Int, roomBookingDate: [Date])
+    init (roomNumber: Int, guestId: Int, noOfGuest: Int, roomBookingDate: [Date],stayingDays : Int)
     {
-        RoomBooking.count += 1
-        bookingId       = RoomBooking.count
-        bookingDate     = Date()
-        self.roomNumber = roomNumber
-        self.guestId    = guestId
-        self.noOfGuest  = noOfGuest
+        RoomBooking.count    += 1
+        bookingId             = RoomBooking.count
+        bookingDate           = Date()
+        self.roomNumber       = roomNumber
+        self.guestId          = guestId
+        self.noOfGuest        = noOfGuest
+        self.roomBookingDate  = roomBookingDate
+        self.stayingDays      = stayingDays
+    }
+    init (bookingId : Int,bookingDate :Date,roomNumber: Int,guestId: Int,noOfGuest: Int,roomBookingDate: [Date],bookingStatus: BookingStatus,stayingDays : Int)
+    {
+        self.bookingId       = bookingId
+        self.bookingDate     = bookingDate
+        self.roomNumber      = roomNumber
+        self.guestId         = guestId
+        self.noOfGuest       = noOfGuest
         self.roomBookingDate = roomBookingDate
+        self.bookingStatus   = bookingStatus
+        self.stayingDays     = stayingDays
     }
     var roomBookingDateProperty: [Date]
     {
@@ -32,6 +45,10 @@ class RoomBooking :  CustomStringConvertible
     var roomNumberProperty: Int
     {
         return roomNumber
+    }
+    var bookingDateProperty: Date
+    {
+        return bookingDate
     }
     var bookingIdProperty: Int
     {
@@ -49,14 +66,16 @@ class RoomBooking :  CustomStringConvertible
     }
     var description: String
     {
-        let startDate = Validation.convertDateToString(formate:"yyyy-MM-dd",date: roomBookingDate.first!) ?? ""
-        let endDate   = Validation.convertDateToString(formate:"yyyy-MM-dd",date: roomBookingDate.last!) ?? ""
+        let bookingDate = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a",date: bookingDate) ?? ""
+        let startDate = Validation.convertDateToString(formate:"dd-MM-yyyy",date: roomBookingDate.first!) ?? ""
+        let endDate   = Validation.convertDateToString(formate:"dd-MM-yyyy",date: roomBookingDate.last!) ?? ""
         return """
                 --------------------------------------
-                Booking Id        :  \(bookingId)
-                Room Number       :  \(roomNumber)
-                No of Guest       :  \(noOfGuest)
-                Booking Date      : [\(startDate) - \(endDate)]
+                Booking Id             :  \(bookingId)
+                Booking Date           :  \(bookingDate)
+                Room Number            :  \(roomNumber)
+                No of Guest            :  \(noOfGuest)
+                Room Booking Date      :  [\(startDate) - \(endDate)]
                """
     }
 }

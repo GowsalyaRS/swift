@@ -26,7 +26,7 @@ struct AdminProcess
                       bookingProcess()
                     case AdminOption.FeedBack_Details.rawValue :
                       FeedbackProcess()
-                     case AdminOption.Room_Booking_Checkout.rawValue :
+                    case AdminOption.Room_Booking_Checkout.rawValue :
                       checkout()
                     case AdminOption.Room_Booking_Checkin.rawValue  :
                       checkin()
@@ -90,8 +90,7 @@ struct AdminProcess
         let feedbackViewModel   = FeedbackViewModel()
         let feedbackView  : FeedbackViewService    = FeedbackView(feedbackViewModel: feedbackViewModel)
         feedbackViewModel.setFeedbackView(feedbackView)
-        let feedback : [Feedback] = feedbackViewModel.getFeedback()
-        feedbackView.displayFeedback(feedback: feedback)
+        feedbackView.displayFeedback(feedback: feedbackViewModel.getFeedback())
     }
     func checkin()
     {

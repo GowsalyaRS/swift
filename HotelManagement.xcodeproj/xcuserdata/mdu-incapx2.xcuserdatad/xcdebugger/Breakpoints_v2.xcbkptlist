@@ -32,23 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "10"
             endingLineNumber = "10"
-            landmarkName = "addedConfirmBooking(guest:roomNumber:dates:noOfGuest:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E954FA61-49A1-45DE-B7A7-37A539DC35DE"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HotelManagement/com/hotelmanagement/booking/BookingViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "15"
-            endingLineNumber = "15"
-            landmarkName = "addedConfirmBooking(guest:roomNumber:dates:noOfGuest:)"
+            landmarkName = "addedConfirmBooking(guest:roomNumber:dates:noOfGuest:stayingDays:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -62,57 +46,9 @@
             filePath = "HotelManagement/com/hotelmanagement/booking/BookingViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
-            landmarkName = "addedConfirmBooking(guest:roomNumber:dates:noOfGuest:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "69B0C4B4-2454-4E37-9F89-28B3B75E02F1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HotelManagement/com/hotelmanagement/datalayer/HotelDataLayer.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
-            landmarkName = "addBooking(roomNumber:booking:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DF425763-BC70-48AD-AA60-6BF0CB466841"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HotelManagement/com/hotelmanagement/datalayer/HotelDataLayer.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
-            landmarkName = "addGuestBooking(guestId:booking:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F6D46B04-3119-4228-AD93-71C4469A9249"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HotelManagement/com/hotelmanagement/datalayer/HotelDataLayer.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "addBooking(roomNumber:booking:)"
+            startingLineNumber = "15"
+            endingLineNumber = "15"
+            landmarkName = "addedConfirmBooking(guest:roomNumber:dates:noOfGuest:stayingDays:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -135,7 +71,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BCCB7E42-308E-4CEF-A20B-C779B48891EC"
+            uuid = "30C00850-9602-46DF-9DB0-4D1C05E750C2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"

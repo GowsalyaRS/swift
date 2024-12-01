@@ -1,4 +1,4 @@
-enum PaymentStatus: Codable
+enum PaymentStatus: Int
 {
-    case Pending, Refunded , Success ,No_Paid
+    case Pending = 1, Refunded , Success ,No_Paid
 }

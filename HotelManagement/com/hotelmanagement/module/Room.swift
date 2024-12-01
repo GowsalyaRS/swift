@@ -17,8 +17,11 @@ struct Room : CustomStringConvertible
     }
     init(roomId : Int ,roomType:RoomType,bedType:BedType,price:Float,amenities:[String])
     {
-        self.init (roomType:roomType,bedType:bedType,price:price,amenities:amenities)
         self.roomId     = roomId
+        self.roomType   = roomType
+        self.bedType    = bedType
+        self.price      = price
+        self.amenities  = amenities
     }
     var roomIdProperty : Int
     {

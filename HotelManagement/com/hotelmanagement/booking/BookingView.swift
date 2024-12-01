@@ -16,22 +16,22 @@ class BookingView  : BookingViewService
     {
         self.paymentDelegate = paymentDelegate
     }
-    func  getRoomBookingDetails(guest : Guest)
+    func getRoomBookingDetails(guest : Guest) throws
     {
-         let roomId  = ValidInput.getCapacity(inputName  :" Enter the room Id    : ")
+         let roomId  = ValidInput.getCapacity(inputName :" Enter the room Id    : ")
          if roomId == 0 {  return  }
          if ((delegate?.isValidRoomNumber(roomId : roomId)) == true)
          {
-           let date   = ValidInput.getDate(inputName :" Enter the Date (dd-mm-yyyy)  :")
+            let date = ValidInput.getDate(inputName :" Enter the Date (dd-MM-yyyy)  :")
             if date == nil{  return  }
-            let days =  ValidInput.getCapacity(inputName      :" Enter the staying days : ")
+            let days =  ValidInput.getCapacity(inputName :" Enter the staying days : ")
             if days == 0 {  return }
             let dates : [Date] = Validation.generateDateArray(startDate: date!, numberOfDays: days)
             if let (isAvailable, roomNumber) = delegate?.isRoomAvailabilityChecking(roomId: roomId, startDate: dates.first!, endDate: dates.last!) , isAvailable == true
             {
                 let noOfGuest =  ValidInput.getCapacity(inputName :" Enter the no of guest  : ")
                 if noOfGuest == 0  { return }
-                let roomBooking = bookingViewModel.addedConfirmBooking(guest : guest, roomNumber: roomNumber, dates: dates, noOfGuest: noOfGuest)
+                let roomBooking = try bookingViewModel.addedConfirmBooking(guest : guest, roomNumber: roomNumber, dates: dates, noOfGuest: noOfGuest, stayingDays : days)
                 print("Room Booking is Successfully. Your Room Number is : \(roomNumber)")
                 let paymentViewModel = PaymentViewModel()
                 let paymentView = PaymentView(paymentViewModel: paymentViewModel as PaymentViewModelService)
@@ -69,9 +69,11 @@ class BookingView  : BookingViewService
             if (bookingStatus == .pending)
             {
                 bookingViewModel.getRoomBookingDetails()
-                return
             }
-            bookingViewModel.getRoomBookingDetails(bookingStatus : bookingStatus!)
+            else
+            {
+                bookingViewModel.getRoomBookingDetails(bookingStatus : bookingStatus!)
+            }
             print ("Press 0 to exit, any other key to continue ")
             if let num : Int = Int.init(readLine()!)
             {
@@ -82,14 +84,13 @@ class BookingView  : BookingViewService
             }
         }
     }
-    func displayBookingDetails(roomBookings : [RoomBooking], roomNumber : Int)
+    func displayBookingDetails(roomBookings : [RoomBooking])
     {
         if roomBookings.isEmpty
         {
-            print (" No Bookings Found  in room number :  (\(roomNumber))")
+            print (" No Bookings Found  ")
             return
         }
-        print (" Booking room number \(roomNumber)")
         for roomBooking in roomBookings
         {
             print (roomBooking)
@@ -153,11 +154,11 @@ class BookingView  : BookingViewService
             print ("Booking not found")
         }
     }
-    func  getInputCheckOutBooking()
+    func getInputCheckOutBooking()
     {
         let bookingId : Int  = getInputBookingId()
         guard bookingId > 0 else { print ("Invalid input"); return }
-        let  (isValid ,booking) =  bookingViewModel.isAvailableCheckOut(bookingId : bookingId)
+        let  (isValid,booking) =  bookingViewModel.isAvailableCheckOut(bookingId : bookingId)
         if isValid
         {
             bookingViewModel.setCheckoutDetails(booking: booking!)

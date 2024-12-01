@@ -67,11 +67,11 @@ class GuestView : GuestViewService
                  switch choice
                  {
                      case BookingGuestOption.ListOfRoom.rawValue :
-                      var _ = listRoom()
+                       var _ = listRoom()
                      case BookingGuestOption.RoomBooking.rawValue:
-                      roomBooking(guest : guest)
+                       roomBooking(guest : guest)
                      case BookingGuestOption.BookingHistory.rawValue:
-                      bookingHistory(guest : guest)
+                        bookingHistory(guest : guest)
                      case BookingGuestOption.CancelBooking.rawValue:
                        cancelBooking(guest : guest)
                      case  BookingGuestOption.CancelBookingHistory.rawValue:
@@ -113,7 +113,7 @@ class GuestView : GuestViewService
         bookingViewModel.setBookingView(bookingView: bookingView)
         return (bookingView,bookingViewModel)
     }
-    func roomBooking(guest : Guest)
+    func roomBooking(guest : Guest) 
     {
         if (listRoom())
         {
@@ -122,10 +122,17 @@ class GuestView : GuestViewService
             let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel)
             roomViewModel.setRoomView(roomView: roomView)
             bookingView.setDelegate(delegate: roomViewModel as! RoomDelegation)
-            bookingView.getRoomBookingDetails(guest : guest)
+            do
+            {
+               try bookingView.getRoomBookingDetails(guest : guest)
+            }
+            catch 
+            {
+               print ("Room booking is Failed")
+            }
         }
     }
-    func bookingHistory (guest : Guest)
+    func bookingHistory (guest : Guest) 
     {
         let (bookingView,bookingViewModel) = booking()
         let bookings = bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.confirmed)
@@ -144,7 +151,7 @@ class GuestView : GuestViewService
         let bookingId =  bookingView.getInputBookingId()
         guard bookingId > 0 else { print("Invalid booking id"); return}
         let (isValid , booking) = bookingViewModel.checkBooking(bookingId: bookingId)
-        if isValid
+        if isValid && booking?.bookingStatusProperty == BookingStatus.checkout
         {
              let  feedbackViewModel = FeedbackViewModel()
              let feedbackView = FeedbackView(feedbackViewModel: feedbackViewModel)
@@ -168,13 +175,14 @@ class GuestView : GuestViewService
         for booking in validBooking
         {
             print (booking)
+            print ("---------------------------------")
         }
         bookingView.getInputCancelBooking(booking: validBooking)
     }
     func cancelBookingHistory(guest : Guest)
     {
         let (bookingView,bookingViewModel) = booking()
-        let bookings = bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.cancelled)
+        let bookings =  bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.cancelled)
         if !bookings.isEmpty
         {
             bookingView.displayRoomBookingDetails(bookings : bookings)

@@ -31,8 +31,8 @@ struct Payment : CustomStringConvertible
     var description: String
     {
        return """
-               Payment Status : \(paymentStatus)
-               Total Amount   : \(totalAmount)
+                Payment Status         :  \(paymentStatus)
+                Total Amount           :  \(totalAmount)
                -------------------------------------- 
                """
     }

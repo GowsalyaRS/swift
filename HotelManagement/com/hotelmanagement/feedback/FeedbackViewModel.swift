@@ -1,3 +1,4 @@
+import Foundation
 class FeedbackViewModel : FeedbackViewModelService
 {
     private weak var feedbackView  : FeedbackViewService?
@@ -8,8 +9,12 @@ class FeedbackViewModel : FeedbackViewModelService
     }
     func isAvailableFeedback(booking: RoomBooking) -> Bool
     {
-        let feedback =  hotel.getFeedback(bookingId: booking.bookingIdProperty)
-        if feedback == nil
+        let query =  """
+                      select * from feedback
+                      where bookingId = \(booking.bookingIdProperty)
+                     """
+        let feedback = hotel.executeQueryData(query: query)
+        if ((feedback?.isEmpty) != nil)
         {
             return true
         }
@@ -17,7 +22,12 @@ class FeedbackViewModel : FeedbackViewModelService
     }
     func isValidWriteFeedback(booking: RoomBooking) -> Bool
     {
-        if booking.bookingStatusProperty == .checkout
+        let query = """
+                     select * from 
+                     where bookingStatusId = \(BookingStatus.checkout.rawValue)
+                    """
+        let feedback = hotel.executeQueryData(query: query)
+        if !(feedback?.isEmpty == nil)
         {
             return true
         }
@@ -25,11 +35,32 @@ class FeedbackViewModel : FeedbackViewModelService
     }
     func createFeedback(bookingId : Int , rating : Int , comment : String)
     {
-        let feedback : Feedback = Feedback(bookingId : bookingId ,rating: rating, comment: comment)
-        hotel.addFeedback(bookingId: bookingId, feedback: feedback)
+        let query = """
+            INSERT INTO feedback (bookingId, feedbackDate, comment)
+            VALUES (\(bookingId), '\(Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a", date: Date()))', '\(comment)');
+        """
+        hotel.executeQueryData(query: query)
     }
     func getFeedback() -> [Feedback]
     {
-        return hotel.getAllFeedback()
+        let query = """
+                     select * from feedback
+                    """
+        var feedbackArray : [Feedback] = []
+        if let feedbacks = hotel.executeQueryData(query: query)
+        {
+            for feedback in feedbacks
+            {
+                let bookingId = feedback["bookingId"] as! Int
+                let feedbackDate = feedback["date"] as! String
+                let rating = feedback["rating"] as! Int
+                let comment = feedback["comment"] as! String
+                if let feedbackDate = Validation.convertStringToDate(formate:"dd-MM-yyyy hh:mm:ss a", date: feedbackDate)
+                {
+                    feedbackArray.append(Feedback(bookingId: bookingId,date : feedbackDate ,rating: rating,comment: comment))
+                }
+            }
+        }
+        return feedbackArray
     }
 }

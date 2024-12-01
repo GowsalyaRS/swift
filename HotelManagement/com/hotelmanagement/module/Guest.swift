@@ -16,9 +16,11 @@ struct Guest :  CustomStringConvertible
     }
     init (guestId: Int, name: String, phoneNo: Int64, address: String, role:GuestRole)
     {
-        self.init (name: name, phoneNo: phoneNo, address: address)
         self.guestId       = guestId
         self.role          = role
+        self.name          = name
+        self.phoneNo       = phoneNo
+        self.address       = address.replacingOccurrences(of: "'", with: "")
     }
     var roleProperty : GuestRole
     {
