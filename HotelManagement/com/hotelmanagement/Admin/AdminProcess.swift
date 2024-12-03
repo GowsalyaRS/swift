@@ -2,37 +2,44 @@ struct AdminProcess
 {
     func adminInit(guest : Guest)
     {
-        print("\t\t---------------------------------------------")
-        print ("\t\t\tWelcome, \(guest.nameProperty) You have access to the Admin interface now ")
-        print("\t\t----------------------------------------------")
+        print("\t\t----------------------------------------------------------------------------------")
+        print("\t\t\tWelcome, \(guest.nameProperty) You have access to the Admin interface now ")
+        ("\t\t----------------------------------------------------------------------------------")
         while (true)
         {
-            print("-----------------------------")
+            print("-------------------------------------------")
             for adminOption in AdminOption.allCases
             {
                 print("\t\t\(adminOption.rawValue) . \(adminOption)")
             }
-            print("-----------------------------")
+            print("-------------------------------------------")
             print ("Enter the option : ",terminator: "")
             if let input = readLine(), let choice = Int(input)
             {
-                switch choice
+                do
                 {
-                    case AdminOption.Room.rawValue:
-                      roomInit(guest : guest)
-                    case AdminOption.Guest_Details.rawValue:
-                       guestProcess()
-                    case AdminOption.Booking_Details.rawValue:
-                      bookingProcess()
-                    case AdminOption.FeedBack_Details.rawValue :
-                      FeedbackProcess()
-                    case AdminOption.Room_Booking_Checkout.rawValue :
-                      checkout()
-                    case AdminOption.Room_Booking_Checkin.rawValue  :
-                      checkin()
-                    case AdminOption.LogOut.rawValue:
-                        return
-                    default : print("Invalid choice")
+                    switch choice
+                    {
+                        case AdminOption.Room.rawValue:
+                            roomInit(guest : guest)
+                        case AdminOption.Guest_Details.rawValue:
+                           try guestProcess()
+                        case AdminOption.Booking_Details.rawValue:
+                           try bookingProcess()
+                        case AdminOption.FeedBack_Details.rawValue :
+                           try FeedbackProcess()
+                        case AdminOption.Room_Booking_Checkout.rawValue :
+                           try checkout()
+                        case AdminOption.Room_Booking_Checkin.rawValue  :
+                           try checkin()
+                        case AdminOption.LogOut.rawValue:
+                            return
+                        default : print("Invalid choice")
+                    }
+                }
+                catch
+                {
+                    print("\(error.localizedDescription)")
                 }
             }
             else
@@ -54,15 +61,22 @@ struct AdminProcess
             print("Enter your choice:",terminator: "")
             if let input = readLine(), let choice = Int(input)
             {
-                switch choice
+                do
                 {
-                    case RoomAdminOption.Add_Rooms.rawValue :
-                      addRooms()
-                    case RoomAdminOption.View_Rooms_Details.rawValue :
-                       roomDetails()
-                    case RoomAdminOption.Back.rawValue :
-                        return
-                    default : print("Invalid choice")
+                    switch choice
+                    {
+                        case RoomAdminOption.Add_Rooms.rawValue :
+                            try addRooms()
+                        case RoomAdminOption.View_Rooms_Details.rawValue :
+                           try roomDetails()
+                        case RoomAdminOption.Back.rawValue :
+                            return
+                        default : print("Invalid choice")
+                    }
+                }
+                catch
+                {
+                    print ("\(error.localizedDescription)")
                 }
             }
             else
@@ -71,58 +85,69 @@ struct AdminProcess
             }
         }
     }
-    func guestProcess()
+    func guestProcess() throws
     {
         let guestViewModel  = GuestViewModel() 
         let guestView   : GuestViewService = GuestView(guestViewModel: guestViewModel) as GuestViewService
         guestViewModel.setGuestView(guestView: guestView)
-        guestView.displayGuestDetails(guests:guestViewModel.getGuestDeatils())
+        try guestView.displayGuestDetails(guests:guestViewModel.getGuestDeatils())
     }
-    func bookingProcess()
+    func bookingProcess() throws
     {
         let bookingViewModel  = BookingViewModel() 
         let bookingView   : BookingViewService = BookingView(bookingViewModel: bookingViewModel) as BookingViewService
         bookingViewModel.setBookingView(bookingView: bookingView)
-        bookingView.getInputBookingStatus()
+        try bookingView.getInputBookingStatus()
     }
-    func FeedbackProcess()
+    func FeedbackProcess() throws
     {
         let feedbackViewModel   = FeedbackViewModel()
         let feedbackView  : FeedbackViewService    = FeedbackView(feedbackViewModel: feedbackViewModel)
         feedbackViewModel.setFeedbackView(feedbackView)
-        feedbackView.displayFeedback(feedback: feedbackViewModel.getFeedback())
+       feedbackView.displayFeedback(feedback: try feedbackViewModel.getFeedback())
     }
-    func checkin()
+    func checkin() throws
     {
         let bookingViewModel = BookingViewModel()
         let bookingView = BookingView(bookingViewModel: bookingViewModel)
         bookingViewModel.setBookingView(bookingView: bookingView)
-        bookingView.getInputCheckInBooking()
-    }
-    func checkout()
-    {
-        let bookingViewModel = BookingViewModel()
-        let bookingView = BookingView(bookingViewModel: bookingViewModel)
-        bookingViewModel.setBookingView(bookingView: bookingView)
-        bookingView.getInputCheckOutBooking()
-    }
-    func roomDetails()
-    {
-        let roomViewModel :  RoomViewModelService = RoomViewModel() as RoomViewModelService
-        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
-        roomViewModel.setRoomView(roomView: roomView)
-        let (isAvailable, rooms) = roomViewModel.isRoomChecking()
-        if(isAvailable)
+        let bookings =  try bookingViewModel.getRoomBooking(bookingStatus : BookingStatus.confirmed)
+        if bookings.isEmpty
         {
-            roomView.viewRoomDetails(room : rooms)
+            print ("No Available room checkin date today at hotel")
+            return
         }
+        try bookingView.displayRoomBookingDetails(bookings: bookings)
+        try bookingView.getInputCheckInBooking()
     }
-    func addRooms()
+    func checkout() throws
+    {
+        let bookingViewModel = BookingViewModel()
+        let bookingView = BookingView(bookingViewModel: bookingViewModel)
+        bookingViewModel.setBookingView(bookingView: bookingView)
+        let bookings =  try bookingViewModel.getRoomBooking(bookingStatus : BookingStatus.checkin)
+        if bookings.isEmpty
+        {
+            print ("No Available room checkout date today at hotel")
+            return
+        }
+        try bookingView.displayRoomBookingDetails(bookings: bookings)
+        try  bookingView.getInputCheckOutBooking()
+    }
+    func roomDetails() throws
     {
         let roomViewModel :  RoomViewModelService = RoomViewModel() as RoomViewModelService
         let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
         roomViewModel.setRoomView(roomView: roomView)
-        roomView.getRoomSetupDetails()
+        let rooms = try roomViewModel.isRoomChecking()
+       try roomView.viewRoomDetails(room : rooms)
+    }
+    func addRooms() throws
+    {
+        let roomViewModel :  RoomViewModelService = RoomViewModel() as RoomViewModelService
+        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
+        roomViewModel.setRoomView(roomView: roomView)
+        try  roomView.getRoomSetupDetails()
     }
 }
 

@@ -1,6 +1,6 @@
 protocol LoginViewService : AnyObject
 {
-    func getLoginData()
+    func getLoginData() throws
     func onAdminSuccess(guest : Guest)
     func onGuestSuccess(guest : Guest)
 }

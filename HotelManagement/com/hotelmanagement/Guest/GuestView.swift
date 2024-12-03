@@ -5,11 +5,11 @@ class GuestView : GuestViewService
     {
         self.guestViewModel = guestViewModel
     }
-    func inputGetGuestSignupDetails()
+    func inputGetGuestSignupDetails() throws
     {
         let phoneNo  = ValidInput.getPhoneNo(inputName :"Enter your phone number : ")
         if phoneNo == 0 { return }
-        if  guestViewModel.isAvailablePhoneNo(phoneNo : (phoneNo))
+        if try guestViewModel.isAvailablePhoneNo(phoneNo : (phoneNo))
         {
             let name     = ValidInput.getName   (inputName :"Enter your name         : ")
             if name.isEmpty { return }
@@ -17,15 +17,14 @@ class GuestView : GuestViewService
             if address.isEmpty { return }
             let userNamePassword  = inputGetAuthendicationDetails()
             if userNamePassword.username.isEmpty || userNamePassword.password.isEmpty { return }
-            let guest = guestViewModel.createGuest(name : name, phoneNo: phoneNo, address: address)
-            let _ =  guestViewModel.createAuthendication(guestId : guest.guestIdProperty, username : userNamePassword.username, password: userNamePassword.password)
+            let guest = try guestViewModel.createGuest(name : name, phoneNo: phoneNo, address: address)
+            let _ = try guestViewModel.createAuthendication(guestId : guest.guestIdProperty, username : userNamePassword.username, password: userNamePassword.password)
             print ("Guest Added Successfully :  Your Guest Id is \(guest.guestIdProperty)")
             guestInit(guest: guest)
         }
         else
         {
             print ("Already signup with this phone number")
-            inputGetGuestSignupDetails()
         }
     }
     func inputGetAuthendicationDetails() -> (username: String, password: String)
@@ -38,10 +37,10 @@ class GuestView : GuestViewService
     }
     func displayGuestDetails(guests : [Guest])
     {
-        if (guests.isEmpty)
+        if guests.isEmpty
         {
-            print ("No guest found")
-            return;
+            print("No guest found")
+            return
         }
         for guest in guests
         {
@@ -64,23 +63,30 @@ class GuestView : GuestViewService
              print ("Enter your choice : " , terminator: "")
              if let input = readLine(), let choice = Int(input)
              {
-                 switch choice
+                 do
                  {
+                     switch choice
+                     {
                      case BookingGuestOption.ListOfRoom.rawValue :
-                       var _ = listRoom()
+                        try listRoom()
                      case BookingGuestOption.RoomBooking.rawValue:
-                       roomBooking(guest : guest)
+                        try roomBooking(guest : guest)
                      case BookingGuestOption.BookingHistory.rawValue:
-                        bookingHistory(guest : guest)
+                        try bookingHistory(guest : guest)
                      case BookingGuestOption.CancelBooking.rawValue:
-                       cancelBooking(guest : guest)
+                        try cancelBooking(guest : guest)
                      case  BookingGuestOption.CancelBookingHistory.rawValue:
-                       cancelBookingHistory(guest : guest)
+                        try cancelBookingHistory(guest : guest)
                      case BookingGuestOption.WriteFeedback.rawValue:
-                        writeFeedback(guest : guest)
+                        try writeFeedback(guest : guest)
                      case BookingGuestOption.LogOut.rawValue:
-                     return
+                         return
                      default : print("Invalid choice")
+                     }
+                 }
+                 catch
+                 {
+                     print ("\(error.localizedDescription)")
                  }
              }
              else
@@ -89,22 +95,13 @@ class GuestView : GuestViewService
              }
          }
     }
-    func listRoom() -> Bool
+    func listRoom() throws
     {
         let roomViewModel : RoomViewModelService = RoomViewModel()
         let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel)
         roomViewModel.setRoomView(roomView: roomView)
-        let (isAvailable, rooms) = roomViewModel.isRoomChecking()
-        if(isAvailable)
-        {
-            roomView.viewRoomDetails(room : rooms)
-            return true
-        }
-        else
-        {
-            print (" room listings are not available at the hotel")
-            return false
-        }
+        let (rooms) = try roomViewModel.isRoomChecking()
+        try roomView.viewRoomDetails(room : rooms)
     }
     func booking() -> (BookingView,BookingViewModel)
     {
@@ -113,83 +110,76 @@ class GuestView : GuestViewService
         bookingViewModel.setBookingView(bookingView: bookingView)
         return (bookingView,bookingViewModel)
     }
-    func roomBooking(guest : Guest) 
+    func roomBooking(guest : Guest)  throws
     {
-        if (listRoom())
-        {
-            let (bookingView,_) = booking()
-            let roomViewModel : RoomViewModelService = RoomViewModel()
-            let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel)
-            roomViewModel.setRoomView(roomView: roomView)
-            bookingView.setDelegate(delegate: roomViewModel as! RoomDelegation)
-            do
-            {
-               try bookingView.getRoomBookingDetails(guest : guest)
-            }
-            catch 
-            {
-               print ("Room booking is Failed")
-            }
-        }
+        let (bookingView,_) = booking()
+        let roomViewModel : RoomViewModelService = RoomViewModel()
+        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel)
+        roomViewModel.setRoomView(roomView: roomView)
+        bookingView.setDelegate(delegate: roomViewModel as! RoomDelegation)
+        try listRoom()
+        try bookingView.getRoomBookingDetails(guest : guest)
     }
-    func bookingHistory (guest : Guest) 
+    func bookingHistory (guest : Guest)  throws
     {
         let (bookingView,bookingViewModel) = booking()
-        let bookings = bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.confirmed)
-        if !bookings.isEmpty
-        {
-            bookingView.displayRoomBookingDetails(bookings : bookings)
-        }
-        else
-        {
-           print ("No Booking History")
-        }
+        let bookings = try bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.confirmed)
+        try bookingView.displayRoomBookingDetails(bookings : bookings)
     }
-    func writeFeedback(guest : Guest)
+    func writeFeedback(guest : Guest) throws
     {
         let (bookingView,bookingViewModel) = booking()
+        let bookings  = try bookingViewModel.isAvailableBookingHistory(guest: guest, bookingStatus: BookingStatus.checkout)
+        if bookings.isEmpty
+        {
+            throw Result.failure(msg :"No one have feedback")
+        }
+        bookingView.displayBookingDetails(roomBookings: bookings)
         let bookingId =  bookingView.getInputBookingId()
         guard bookingId > 0 else { print("Invalid booking id"); return}
-        let (isValid , booking) = bookingViewModel.checkBooking(bookingId: bookingId)
-        if isValid && booking?.bookingStatusProperty == BookingStatus.checkout
+        for booking in bookings
         {
-             let  feedbackViewModel = FeedbackViewModel()
-             let feedbackView = FeedbackView(feedbackViewModel: feedbackViewModel)
-             feedbackViewModel.setFeedbackView(feedbackView)
-             feedbackView.getInputFeedbackDetails(booking: booking!)
-         }
-         else
-         {
-            print("Invalid booking id")
-         }
+            if booking.bookingIdProperty == bookingId
+            {
+                let  feedbackViewModel = FeedbackViewModel()
+                let feedbackView = FeedbackView(feedbackViewModel: feedbackViewModel)
+                feedbackViewModel.setFeedbackView(feedbackView)
+                try feedbackView.getInputFeedbackDetails(booking: booking)
+                return
+            }
+        }
+        print ("Invalid Booking Id")
     }
-    func cancelBooking(guest : Guest)
+    func cancelBooking(guest : Guest) throws
     {
         let (bookingView,bookingViewModel) = booking()
-        let validBooking : [RoomBooking] = bookingViewModel.getValidBooking(guest: guest)
-        if validBooking.isEmpty
-        {
-           print ("No Avilable booking found")
-           return
-        }
-        for booking in validBooking
-        {
-            print (booking)
-            print ("---------------------------------")
-        }
-        bookingView.getInputCancelBooking(booking: validBooking)
+
+           let validBooking : [RoomBooking] = try bookingViewModel.getValidBooking(guest: guest)
+           for booking in validBooking
+           {
+               print (booking)
+               print ("----------------------------------")
+           }
+          try bookingView.getInputCancelBooking(booking: validBooking)
     }
-    func cancelBookingHistory(guest : Guest)
+    func cancelBookingHistory(guest : Guest) throws
     {
         let (bookingView,bookingViewModel) = booking()
-        let bookings =  bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.cancelled)
-        if !bookings.isEmpty
+        let bookings =  try bookingViewModel.isAvailableBookingHistory(guest : guest ,bookingStatus: BookingStatus.cancelled)
+        try bookingView.displayRoomBookingDetails(bookings : bookings)
+    }
+    func inputGetChangePassword() throws
+    {
+        let phoneNo = ValidInput.getPhoneNo(inputName: "Enter the phoneNo ")
+        if try !guestViewModel.isAvailablePhoneNo(phoneNo: phoneNo)
         {
-            bookingView.displayRoomBookingDetails(bookings : bookings)
+            let username = ValidInput.isEmptyValidation(inputName: "Enter the username ")
+            let password = ValidInput.getPassword(inputName: "Enter the new password ") 
+            try guestViewModel.changePassword(phoneNo: phoneNo , userName: username,password : password)
         }
         else
         {
-          print ("No Cancelling History")
+            print("Your Phoneno is Invalid")
         }
     }
 }

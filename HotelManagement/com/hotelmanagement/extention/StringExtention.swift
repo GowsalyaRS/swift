@@ -21,7 +21,6 @@ extension String
        }
        return false
     }
-    
     func passwordValidation(password : String) -> Bool
     {
        if (password.count>6)

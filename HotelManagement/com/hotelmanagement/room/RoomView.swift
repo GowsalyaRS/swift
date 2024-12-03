@@ -5,7 +5,7 @@ class RoomView : RoomViewService
     {
         self.roomViewModel = roomViewModel
     }
-    func  getRoomSetupDetails()
+    func  getRoomSetupDetails() throws
     {
         let noOfRoom = ValidInput.getCapacity(inputName: "Enter the number of the room   : ")
         if noOfRoom == 0  { return }
@@ -16,11 +16,14 @@ class RoomView : RoomViewService
         let price    = ValidInput.getPrice(inputName  : "Enter the price of the room   : ");
         if price == 0  { return }
         let amenities = ValidInput.getAmenities(inputName:"Enter the amenities              : ")
-        roomViewModel.createRoom(roomType: roomType!, bedType: bedType!, price: price, amenities: amenities, noOfRoom:noOfRoom )
-        print ("Room Created Successfully")
+        try roomViewModel.createRoom(roomType: roomType!, bedType: bedType!, price: price, amenities: amenities, noOfRoom:noOfRoom )
     }
-    func  viewRoomDetails(room  rooms :  [Room])
+    func viewRoomDetails(room  rooms :  [Room]) throws
     {
+        if rooms.isEmpty
+        {
+            throw Result.failure(msg: "No Room Found")
+        }
         print ("Room Details:")
         for room in rooms
         {

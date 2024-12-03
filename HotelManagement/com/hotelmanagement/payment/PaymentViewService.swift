@@ -1,4 +1,4 @@
 protocol PaymentViewService : AnyObject
 {
-    func getInputPaymentProcess(roomBooking : RoomBooking)
+    func getInputPaymentProcess(roomBooking : RoomBooking) throws
 }

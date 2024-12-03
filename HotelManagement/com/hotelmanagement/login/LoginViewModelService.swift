@@ -1,4 +1,4 @@
 protocol LoginViewModelService : AnyObject
 {
-    func checkValidation(name : String,password : String)
+    func checkValidation(name : String,password : String) throws
 }

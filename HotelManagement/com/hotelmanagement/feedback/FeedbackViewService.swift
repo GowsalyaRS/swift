@@ -1,5 +1,5 @@
 protocol FeedbackViewService : AnyObject
 {
-    func  getInputFeedbackDetails(booking: RoomBooking)
+    func getInputFeedbackDetails(booking: RoomBooking) throws
     func displayFeedback(feedback: [Feedback])
 }

@@ -1,7 +1,7 @@
 protocol PaymentViewModelService : AnyObject
 {
-    func calculateAmount(roomNumber : Int )  -> Float
-    func getTotalAmount(roomBooking : RoomBooking) -> Float
-    func setPaymentDetails (roomBooking : RoomBooking, amount : Float,paymentStatus : PaymentStatus)
+    func calculateAmount(roomNumber : Int ) throws -> Float
+    func getTotalAmount(roomBooking : RoomBooking) throws -> Float
+    func setPaymentDetails (roomBooking : RoomBooking, amount : Float,paymentStatus : PaymentStatus)  throws
 }
 

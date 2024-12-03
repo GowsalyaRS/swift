@@ -53,9 +53,9 @@ struct Guest :  CustomStringConvertible
     {
         return """
                   ------------------------------
-                  Name      : \(name), 
-                  Phone No  : \(phoneNo), 
-                  Address   : \(address)
+                   Name      : \(name), 
+                   Phone No  : \(phoneNo), 
+                   Address   : \(address)
                   ------------------------------
                """
     }

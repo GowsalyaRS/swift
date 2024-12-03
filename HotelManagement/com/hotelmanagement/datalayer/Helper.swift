@@ -13,7 +13,7 @@ struct  Helper
             }
             catch
             {
-                throw DatabaseError.tableCreationFailed("Failed to create table: \(error.localizedDescription)")
+                throw DatabaseError.tableCreationFailed(msg : "Failed to create table: \(error.localizedDescription)")
             }
     }
     func createGuestTable()
@@ -33,7 +33,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating guests table: \(error)")
+            print("Guest table creation failed ")
         }
     }
     func createAuthenticationTable()
@@ -52,7 +52,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating Authendication table: \(error)")
+            print("Error creating Authendication table ")
         }
     }
     func createRoomTable()
@@ -73,12 +73,12 @@ struct  Helper
         }
         catch
         {
-            print("Error creating rooms table: \(error)")
+            print("Error creating rooms table")
         }
     }
     func createHotelRoomTable()
     {
-        let createTableQuery = """
+        let createTableQuery =   """
                                     CREATE TABLE IF NOT EXISTS hotel_rooms (
                                     roomNumber INTEGER PRIMARY KEY,
                                     roomId INTEGER,
@@ -91,7 +91,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating hotel_rooms table: \(error)")
+            print("Error creating hotel_rooms table ")
         }
     }
     func createBookingTable()
@@ -117,7 +117,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating guests table: \(error)")
+            print("Error creating guests table ")
         }
     }
     func createLoginTable()
@@ -135,7 +135,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating guests table: \(error)")
+            print("Error creating guests table")
         }
     }
     func createPaymentTable()
@@ -155,7 +155,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating payment table: \(error)")
+            print("Error creating payment table")
         }
     }
     func createCancellationTable()
@@ -174,7 +174,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating cancel_booking table: \(error)")
+            print("Error creating cancel_booking table ")
         }
     }
     func createBedTypeTable()
@@ -190,7 +190,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating bed_type table: \(error)")
+            print("Error creating bed_type table ")
         }
     }
     func createGuestRoleTable()
@@ -206,10 +206,10 @@ struct  Helper
         }
         catch
         {
-            print("Error creating guest_role table: \(error)")
+            print("Error creating guest_role table")
         }
     }
-    func createBookingStatusTable()
+    func createBookingStatusTable() 
     {
         let createTableQuery = """
                                 CREATE TABLE IF NOT EXISTS booking_status (
@@ -222,7 +222,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating booking_status table: \(error)")
+            print( "Booking Status Table creation failed: ")
         }
     }
     func createPaymentStatusTable()
@@ -238,7 +238,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating payment_status table: \(error)")
+            print("Error creating payment_status table")
         }
     }
     func createRoomTypeTable()
@@ -254,7 +254,7 @@ struct  Helper
         }
         catch
         {
-            print("Error creating room_type table: \(error)")
+            print("Error creating room_type table")
         }
     }
     func createFeedbackTable()
@@ -273,96 +273,96 @@ struct  Helper
         }
         catch
         {
-            print("Error creating feedback table: \(error)")
+            print("Error creating feedback table")
         }
     }
-    func insertBedType()
+    func insertBedType() throws
     {
-        var bedQuery :  [[String:Any]]? =  hotelDataLayer.executeQueryData(query: "select * from bed_type limit 1")
-        if bedQuery?.isEmpty == true
+        let bedQuery  =  try hotelDataLayer.executeQueryData(query: "select * from bed_type limit 1")
+        if bedQuery.isEmpty
         {
-            let _ =  hotelDataLayer.insertRecord(query: "insert into bed_type (bed_type) values ('Single'),('Double'),('Triple')")
+            try  hotelDataLayer.insertRecord(query: "insert into bed_type (bed_type) values ('Single'),('Double'),('Triple')")
         }
     }
-    func insertRoomType()
+    func insertRoomType() throws
     {
-        var roomQuery = hotelDataLayer.executeQueryData(query: "select * from room_type limit 1")
-        if roomQuery?.isEmpty == true
+        let roomQuery =  try hotelDataLayer.executeQueryData(query: "select * from room_type limit 1")
+        if roomQuery.isEmpty
         {
-            let _ =  hotelDataLayer.insertRecord(query: "insert into room_type (room_type) values ('Standard'),('Classic'),('Deluxe')")
+            try hotelDataLayer.insertRecord(query: "insert into room_type (room_type) values ('Standard'),('Classic'),('Deluxe')")
         }
     }
-    func insertBookingType()
+    func insertBookingType() throws
     {
-        var bookingQuery = hotelDataLayer.executeQueryData(query: "select * from booking_status limit 1")
-        if bookingQuery?.isEmpty == true
+        let bookingQuery = try hotelDataLayer.executeQueryData(query: "select * from booking_status limit 1")
+        if bookingQuery.isEmpty
         {
-            let _ = hotelDataLayer.insertRecord(query: "insert into booking_status (booking_status) values  ('Pending'),('Confirmed'),('Cancelled'),('CheckOut'),('CheckIn')")
+            try hotelDataLayer.insertRecord(query: "insert into booking_status (booking_status) values  ('Pending'),('Confirmed'),('Cancelled'),('CheckOut'),('CheckIn')")
         }
     }
-    func insertUserType()
+    func insertUserType() throws
     {
-        var guestQuery =  hotelDataLayer.executeQueryData(query: "select * from guest_role limit 1 ")
-        if guestQuery?.isEmpty == true
+        let guestQuery = try  hotelDataLayer.executeQueryData(query: "select * from guest_role limit 1 ")
+        if guestQuery.isEmpty
         {
-            let _ = hotelDataLayer.insertRecord(query: "insert into guest_role(role) values  ('Admin'),('Guest')")
+            try hotelDataLayer.insertRecord(query: "insert into guest_role(role) values  ('Admin'),('Guest')")
         }
     }
-    func insertPaymentType()
+    func insertPaymentType() throws
     {
-        var paymentQuery = hotelDataLayer.executeQueryData(query: "select * from payment_status limit 1")
-        if  paymentQuery?.isEmpty == true
+        let paymentQuery = try hotelDataLayer.executeQueryData(query: "select * from payment_status limit 1")
+        if  paymentQuery.isEmpty
         {
-            let _ = hotelDataLayer.insertRecord(query: "insert into payment_status (payment_status) values ('Pending'),('Refunded'),('Success'),('No_Paid')")
+            try hotelDataLayer.insertRecord(query: "insert into payment_status (payment_status) values ('Pending'),('Refunded'),('Success'),('No_Paid')")
         }
     }
-    func adminData()
+    func adminData() throws
     {
-        var adminQuery = hotelDataLayer.executeQueryData(query: "select * from guests")
-        if adminQuery?.isEmpty == true
+        let adminQuery = try hotelDataLayer.executeQueryData(query: "select * from guests")
+        if adminQuery.isEmpty
         {
             var guest = Guest (name: "Yugan", phoneNo: 9876543210, address: "KK Nagar Madurai.")
             guest.roleProperty = .Admin
             let authendication = GuestAuthentication(guestId: guest.guestIdProperty,  username: "zoho", password: "123")
-            let _ =  hotelDataLayer .insertRecord(query: "insert into guests values (\(guest.guestIdProperty), '\(guest.nameProperty)', '\(guest.phoneNoProperty)', '\(guest.addressProperty.replacingOccurrences(of: "'", with: "''"))', '\(guest.roleProperty.rawValue) ')")
-           let _ = hotelDataLayer .insertRecord(query: "insert into guest_authentication(guestId,username,password) values (\(authendication.guestIdProperty), '\(authendication.usernameProperty)', '\(authendication.passwordProperty)')" )
+            try  hotelDataLayer .insertRecord(query: "insert into guests values (\(guest.guestIdProperty), '\(guest.nameProperty)', '\(guest.phoneNoProperty)', '\(guest.addressProperty.replacingOccurrences(of: "'", with: "''"))', '\(guest.roleProperty.rawValue) ')")
+           try hotelDataLayer .insertRecord(query: "insert into guest_authentication(guestId,username,password) values (\(authendication.guestIdProperty), '\(authendication.usernameProperty)', '\(authendication.passwordProperty)')" )
         }
         else
         {
-            if let lastGuest = adminQuery!.last, let guestId = lastGuest["guestId"] as? Int
+            if let lastGuest = adminQuery.last, let guestId = lastGuest["guestId"] as? Int
             {
                 Guest.counterProperty = guestId
             }
         }
     }
-    func roomData()
+    func roomData() throws
     {
-        var roomsQuery = hotelDataLayer.executeQueryData(query: "select * from rooms")
-        if  roomsQuery!.isEmpty == false
+        let roomsQuery =  try hotelDataLayer.executeQueryData(query: "select * from rooms")
+        if  !roomsQuery.isEmpty
         {
-            if let lastRoom = roomsQuery!.last, let roomId = lastRoom["roomId"] as? Int
+            if let lastRoom = roomsQuery.last, let roomId = lastRoom["roomId"] as? Int
             {
                 Room.counter =  roomId
             }
         }
     }
-    func hotelRoomData() 
+    func hotelRoomData()  throws
     {
-        var hotelRoomQuery = hotelDataLayer.executeQueryData(query: "select * from hotel_rooms")
-        if  hotelRoomQuery!.isEmpty == false
+        let hotelRoomQuery = try hotelDataLayer.executeQueryData(query: "select * from hotel_rooms")
+        if  !hotelRoomQuery.isEmpty
         {
-            if let lastHotel = hotelRoomQuery!.last, let hotelId = lastHotel["roomNumber"] as? Int
+            if let lastHotel = hotelRoomQuery.last, let hotelId = lastHotel["roomNumber"] as? Int
             {
                 HotelRoom.counterProperty =  hotelId
             }
         }
     }
-    func bookingData()
+    func bookingData() throws
     {
-        var bookingsQuery = hotelDataLayer.executeQueryData(query: "select * from booking")
-        if  bookingsQuery!.isEmpty == false
+        let bookingsQuery = try hotelDataLayer.executeQueryData(query: "select * from booking")
+        if  !bookingsQuery.isEmpty
         {
-            if let lastBooking = bookingsQuery!.last, let bookingId = lastBooking["bookingId"] as? Int
+            if let lastBooking = bookingsQuery.last, let bookingId = lastBooking["bookingId"] as? Int
             {
                 RoomBooking.countProperty = bookingId
             }

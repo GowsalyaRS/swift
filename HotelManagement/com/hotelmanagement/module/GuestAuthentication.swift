@@ -22,7 +22,15 @@ struct GuestAuthentication
     var passwordProperty : String
     {
         get { return password }
-        set { password = newValue }
+    }
+    mutating func setPassword(password: String , username: String) -> Bool
+    {
+        if username == self.username
+        {
+            self.password = password.replacingOccurrences(of: "'", with: "")
+            return true
+        }
+        return false
     }
 }
 

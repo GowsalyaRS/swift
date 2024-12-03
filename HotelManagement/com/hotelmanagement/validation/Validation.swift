@@ -86,17 +86,14 @@ struct  Validation
         {
             return false
         }
-        let matchingAuthendication = HotelDataLayer.getInstance().executeQueryData(query: "select * from guest_authentication where username = '\(name.replacingOccurrences(of: "'", with: ""))'")
-        return (matchingAuthendication?.isEmpty ?? false)
-    }
-    static func findError(dataBaseError : DatabaseError , msg : String)
-    {
-        switch dataBaseError
+        do
         {
-             case .dataInsertionFailed(msg) : print(msg)
-             case .queryExecutionFailed(msg) : print (msg)
-             case .tableCreationFailed(msg) : print (msg)
-             default : print ("Unknown error")
+            let matchingAuthendication = try HotelDataLayer.getInstance().executeQueryData(query: "select * from guest_authentication where username = '\(name.replacingOccurrences(of: "'", with: ""))'")
+            return (matchingAuthendication.isEmpty)
+        }
+        catch
+        {
+            return false
         }
     }
 }

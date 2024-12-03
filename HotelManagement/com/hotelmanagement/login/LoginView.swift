@@ -5,7 +5,7 @@ public class LoginView : LoginViewService
      {
            self.loginViewModel = loginViewModel;
      }
-     func LoginInit()
+     func LoginInit() 
      {
         print ("\t\t---------------------------------------------")
         print ("\t\t Welcome to \"Amirtha\" Hotel Booking System   ")
@@ -21,15 +21,24 @@ public class LoginView : LoginViewService
             print ("Enter your choice :" ,terminator:"")
             if let input = readLine(), let choice = Int(input)
             {
-                switch choice
+                do
                 {
-                   case HotelOption.Signin.rawValue :
-                     getLoginData()
-                   case HotelOption.Signup.rawValue :
-                     guestSignupProcess()
-                   case HotelOption.Exit.rawValue  :
-                     return
-                   default : print("Invalid choice")
+                    switch choice
+                    {
+                     case HotelOption.Signin.rawValue :
+                         try getLoginData()
+                     case HotelOption.Signup.rawValue :
+                         try guestSignupProcess()
+                     case HotelOption.ForgetPassword.rawValue :
+                          try forgetPassword()
+                     case HotelOption.Exit.rawValue  :
+                        return
+                     default : print("Invalid choice")
+                    }
+                }
+                catch
+                {
+                    print ("\(error.localizedDescription)")
                 }
             }
             else
@@ -38,18 +47,25 @@ public class LoginView : LoginViewService
             }
         }
     }
-     func guestSignupProcess()
+    func guestSignupProcess() throws
      {
         let guestViewModel = GuestViewModel()
         let guestView : GuestViewService = GuestView(guestViewModel: guestViewModel)
         guestViewModel.setGuestView(guestView: guestView)
-        guestView.inputGetGuestSignupDetails()
+        try guestView.inputGetGuestSignupDetails()
      }
-     func getLoginData()
+    func getLoginData() throws
      {
          let name : String = ValidInput.isEmptyValidation(inputName: "Enter the username : ")
          let password : String = ValidInput.isEmptyValidation(inputName:"Enter the password : ")
-         loginViewModel.checkValidation(name: name, password: password)
+         try loginViewModel.checkValidation(name: name, password: password)
+     }
+     func forgetPassword() throws
+     {
+         let guestViewModel = GuestViewModel()
+         let guestView  = GuestView(guestViewModel: guestViewModel)
+         guestViewModel.setGuestView(guestView: guestView)
+         try guestView.inputGetChangePassword()
      }
      func onAdminSuccess(guest : Guest)
      {

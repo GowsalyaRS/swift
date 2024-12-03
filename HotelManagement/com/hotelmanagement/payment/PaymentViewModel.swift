@@ -6,7 +6,7 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
     {
         self.paymentView = paymentView
     }
-    func calculateAmount(roomNumber: Int) -> Float
+    func calculateAmount(roomNumber: Int) throws -> Float
     {
         let query = """
                    SELECT price, stayingDays 
@@ -15,8 +15,8 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
                    RIGHT JOIN booking b ON hotel_rooms.roomNumber = b.roomNumber
                    WHERE hotel_rooms.roomNumber = \(roomNumber);
                    """
-        if let result = hotel.executeQueryData(query: query),
-           let roomData = result.first, let stayingDays = roomData["stayingDays"] as? Int,
+         let result = try hotel.executeQueryData(query: query)
+         if  let roomData = result.first, let stayingDays = roomData["stayingDays"] as? Int,
            let price = roomData["price"] as? Double
         {
             let finalPrice = ((price + (price * 0.05)) * Double(stayingDays))
@@ -24,7 +24,7 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
         }
         return 0.0
     }
-    func setPaymentDetails (roomBooking : RoomBooking, amount : Float,paymentStatus : PaymentStatus)
+    func setPaymentDetails (roomBooking : RoomBooking, amount : Float,paymentStatus : PaymentStatus) throws
     {
         let query  = """
                      insert into payment(bookingId,amount,payment_status_id)
@@ -33,16 +33,14 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
                       \(amount),
                       \(paymentStatus.rawValue));
                      """
-        hotel.insertRecord(query: query)
+       try hotel.insertRecord(query: query)
     }
-    func getPayementDetails() -> [Int : Payment]
+    func getPayementDetails() throws -> [Int : Payment]
     {
-       let query = """
-                    select * from payment
-                   """
-        let payments = hotel.executeQueryData(query: query)
+        let query = "select * from payment"
+        let payments = try hotel.executeQueryData(query: query)
         var paymentData : [Int:Payment] = [:]
-        for payment in payments!
+        for payment in payments
         {
             if let bookingId = payment["bookingId"] as? Int,
                let amount = payment["amount"] as? Double,
@@ -56,19 +54,18 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
         }
         return paymentData
     }
-    func isPaymentChecking(roomBooking: RoomBooking) -> Bool
+    func isPaymentChecking(roomBooking: RoomBooking) throws -> Bool
     {
-        let query = """
-                    select payment_status_id from payment where 
-                    bookingId = \(roomBooking.bookingIdProperty)
-                    """
-        let paymentStatusId = hotel.executeQueryData(query: query)?.first?["payment_status_id"] as? Int
+        let query = "select payment_status_id from payment where bookingId =       \(roomBooking.bookingIdProperty)"
+        let paymentStatusId = try hotel.executeQueryData(query: query).first?["payment_status_id"] as? Int
         return PaymentStatus(rawValue: paymentStatusId!) == .Success
     }
-    func getTotalAmount(roomBooking : RoomBooking) -> Float
+    func getTotalAmount(roomBooking : RoomBooking) throws -> Float
     {
         let query = "select amount from payment where bookingId = \(roomBooking.bookingIdProperty)"
-        let amount = hotel.executeQueryData(query: query)?.first?["amount"] as? Double
+        let amount = try hotel.executeQueryData(query: query).first?["amount"] as? Double
+        let querys = "update payment set payment_status_id = \(PaymentStatus.Success.rawValue) where bookingId = \(roomBooking.bookingIdProperty)"
+        try hotel.insertRecord(query: querys)
         return Float(amount!)
     }
 }

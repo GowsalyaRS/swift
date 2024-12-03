@@ -6,39 +6,36 @@ public class LoginViewModel : LoginViewModelService
      {
            self.loginView = loginView;
      }
-     func checkValidation(name : String ,password : String)
-     {
-         if let result = hotel.executeQueryData(query: "SELECT guestId FROM guest_authentication WHERE username = '\(name)' AND password = '\(password)'"),
-            let guestId = result.first?["guestId"] as? Int
+     func checkValidation(name: String, password: String) throws {
+
+        guard let result = try? hotel.executeQueryData(query: "SELECT guestId FROM guest_authentication WHERE username = '\(name)' AND password = '\(password)'"),
+              let guestId = result.first?["guestId"] as? Int else {
+           print("Invalid username or password.")
+            return
+        }
+        guard let guests = try? hotel.executeQueryData(query: "SELECT * FROM guests WHERE guestId = \(guestId)"), let guest = guests.first else {
+            print ("Guest not found.")
+            return
+        }
+        guard let guestId = guest["guestId"] as? Int,
+              let name = guest["name"] as? String,
+              let address = guest["address"] as? String,
+              let roleId = guest["role_id"] as? Int else {
+            print ("Guest not found.")
+            return
+        }
+        if let role = GuestRole(rawValue: roleId)
+        ,let phoneNoString = guest["phoneNo"] as? String, let phoneNo = Int64(phoneNoString)
+        {
+            let guestObject = Guest(guestId: guestId, name: name, phoneNo: phoneNo, address: address, role: role)
+            if guestObject.roleProperty == .Guest
             {
-             if let guests = hotel.executeQueryData(query: "select * from guests where guestId = \(guestId)")
-             {
-                 let guestId = guests.first?["guestId"] as! Int
-                 let name = guests.first?["name"] as! String
-                 let address = guests.first?["address"] as! String
-                 let roleId  = guests.first?["role_id"] as! Int
-                 if let role = GuestRole(rawValue : roleId), let phoneno = Int64(guests.first?["phoneNo"] as! String)
-                 {
-                     let guest = Guest(guestId: guestId, name: name, phoneNo: Int64(phoneno), address: address, role: role)
-                     if guest.roleProperty == GuestRole.Guest
-                     {
-                         loginView?.onGuestSuccess(guest: guest)
-                     }
-                     else
-                     {
-                         loginView?.onAdminSuccess(guest: guest)
-                     }
-                 }
-             }
-             else
-             {
-                 ValidInput.alert(msg: "Guest not found.")
-             }
-         }
-         else
-         {
-            
-             ValidInput.alert(msg: "Invalid Username or Password")
-         }
-     }
+                loginView?.onGuestSuccess(guest: guestObject)
+            }
+            else
+            {
+                loginView?.onAdminSuccess(guest: guestObject)
+            }
+        }
+    }
 }

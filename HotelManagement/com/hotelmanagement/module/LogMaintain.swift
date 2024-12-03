@@ -3,11 +3,14 @@ struct LogMaintain
 {
     private let bookingId : Int
     private var checkIn   : Date
-    private var checkOut  : String
     {
-        didSet { print("checkOut : \(checkOut)  successfully") }
+        didSet { print("checkIn : \(String(describing: Validation.convertDateToString(formate: "dd-MM-yyyy HH:mm:ss a", date: Date())))  successfully") }
     }
-    init (bookingId : Int, checkIn : Date, checkOut : String)
+    private var checkOut  : Date?
+    {
+        didSet { print("checkOut : \(String(describing: Validation.convertDateToString(formate: "dd-MM-yyyy HH:mm:ss a", date: Date())))  successfully") }
+    }
+    init (bookingId : Int, checkIn : Date, checkOut : Date)
     {
         self.bookingId = bookingId
         self.checkIn   = checkIn
@@ -15,10 +18,10 @@ struct LogMaintain
     }
     init(bookingId : Int, checkIn : Date)
     {
-        self.init(bookingId: bookingId, checkIn: checkIn , checkOut: "")
-        print("checkIn : \(checkIn)  successfully")
+        self.bookingId = bookingId
+        self.checkIn   = checkIn
     }
-    mutating func setCheckOut(_ checkOut : String)
+    mutating func setCheckOut(_ checkOut : Date)
     {
         self.checkOut = checkOut
     }

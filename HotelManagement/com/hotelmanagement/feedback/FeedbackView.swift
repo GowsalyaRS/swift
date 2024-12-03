@@ -5,22 +5,16 @@ class FeedbackView : FeedbackViewService
     {
         self.feedbackViewModel = feedbackViewModel
     }
-    func  getInputFeedbackDetails(booking: RoomBooking)
+    func  getInputFeedbackDetails(booking: RoomBooking) throws
     {
-        if(feedbackViewModel.isAvailableFeedback(booking: booking) == false )
+        if( try feedbackViewModel.isAvailableFeedback(booking: booking) == false )
         {
-            print ("Your added feedback already")
-            return
-        }
-        if (feedbackViewModel.isValidWriteFeedback(booking: booking) == false)
-        {
-           print ("The feedback is solely for those who stayed")
-           return
+            throw Result.failure (msg :"Your added feedback already")
         }
         var rating  = 0
         while(true)
         {
-            print ("Enter the rating (1-5)")
+            print ("Enter the rating (1-5) : " ,terminator: "")
             if let input = readLine(), let rate = Int(input)
             {
                 if (rate >= 1 && rate <= 5)
@@ -35,10 +29,9 @@ class FeedbackView : FeedbackViewService
                 return
             }
         }
-        print ("Enter the feedback ")
+        print ("Enter the feedback :",terminator: "")
         let feedback = readLine()!
-        feedbackViewModel.createFeedback(bookingId: booking.bookingIdProperty, rating: rating, comment: feedback)
-        print (" Feedback added successfully ")
+        try feedbackViewModel.createFeedback(bookingId: booking.bookingIdProperty, rating: rating, comment: feedback)
     }
     func displayFeedback(feedback: [Feedback])
     {
