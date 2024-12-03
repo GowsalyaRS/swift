@@ -21,10 +21,11 @@ struct Feedback : CustomStringConvertible
     }
     var description: String
     {
+        let feedbackDate = Validation.convertDateToString(formate: "dd-MM-yyyy hh:mm:ss a", date: date)!
         return """
                    -----------------------------------------
                      Booking Id    : \(bookingId), 
-                     Date          : \(date) , 
+                     Date          : \(feedbackDate), 
                      Rating        : \(rating),
                      Comment       : \(comment)
                   ------------------------------------------
