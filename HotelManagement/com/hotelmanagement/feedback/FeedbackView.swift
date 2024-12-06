@@ -5,11 +5,11 @@ class FeedbackView : FeedbackViewService
     {
         self.feedbackViewModel = feedbackViewModel
     }
-    func  getInputFeedbackDetails(booking: RoomBooking) throws
+    func  getInputFeedbackDetails(booking: RoomBooking) throws -> Result<Void,Error>
     {
         if( try feedbackViewModel.isAvailableFeedback(booking: booking) == false )
         {
-            throw Result.failure (msg :"Your added feedback already")
+            return .failure (DatabaseError.noRecordFound(msg :"Your added feedback already"))
         }
         var rating  = 0
         while(true)
@@ -26,19 +26,27 @@ class FeedbackView : FeedbackViewService
             else
             {
                 print ("Enter the valid rating")
-                return
+                break
             }
         }
         print ("Enter the feedback :",terminator: "")
-        let feedback = readLine()!
-        try feedbackViewModel.createFeedback(bookingId: booking.bookingIdProperty, rating: rating, comment: feedback)
+        let feedbackMsg = readLine()!
+        let feedback = try feedbackViewModel.createFeedback(bookingId: booking.bookingIdProperty, rating: rating, comment: feedbackMsg)
+        switch feedback
+        {
+           case .success (_):
+                print ("Feedback added successfully")
+                return .success(())
+            case .failure (let error):
+                throw error
+        }
+        
     }
-    func displayFeedback(feedback: [Feedback])
+    func displayFeedback(feedback: [Feedback])  throws
     {
         if feedback.isEmpty
         {
-            print ("No feedback available")
-            return
+            throw DatabaseError.noRecordFound (msg : "No feedback available")
         }
         for feedback in feedback
         {

@@ -86,9 +86,10 @@ struct  Validation
         {
             return false
         }
+        let username = name.replacingOccurrences(of: "'", with: "")
         do
         {
-            let matchingAuthendication = try HotelDataLayer.getInstance().executeQueryData(query: "select * from guest_authentication where username = '\(name.replacingOccurrences(of: "'", with: ""))'")
+            let matchingAuthendication = try GuestDataLayer.getInstance().getAuthendicationData().filter({$0.usernameProperty == username})
             return (matchingAuthendication.isEmpty)
         }
         catch

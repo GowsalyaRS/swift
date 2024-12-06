@@ -2,105 +2,59 @@ import Foundation
 class RoomViewModel : RoomViewModelService,RoomDelegation
 {
     private weak var roomView : RoomViewService?
-    private var  hotel = HotelDataLayer.getInstance()
+    private var  roomDataLayer = RoomDataLayer.getInstance()
     func setRoomView( roomView: RoomViewService)
     {
         self.roomView = roomView
     }
-    func createRoom(roomType:RoomType,bedType:BedType,price:Float,amenities:[String],noOfRoom : Int) throws
+    func createRoom(roomType:RoomType,bedType:BedType,price:Float,amenities:[String],noOfRoom : Int) throws -> Result <Void,DatabaseError>
     {
         let room = Room(roomType: roomType, bedType: bedType,price: price,amenities: amenities)
-        let amenitie : String = amenities.joined(separator: ",")
-        var insertRoomQuery = """
-                        INSERT INTO rooms(roomId,room_type_id,bed_id,price,amenities)
-                        VALUES(\(room.roomIdProperty),\(roomType.rawValue), \(bedType.rawValue),\(price),'\(amenitie)');
-                        """
-        do { try hotel.insertRecord(query: insertRoomQuery) }
-        catch { throw Result.failure(msg : "Room Design creation failed") }
+        do { try roomDataLayer.insertRoomStructure(room: room) }
+        catch
+        { return .failure(DatabaseError.insertFailed(msg : "Room creation failed"))}
         for _ in 0..<noOfRoom
         {
             let hotelRoom = HotelRoom(roomId: room.roomIdProperty)
-            insertRoomQuery = "INSERT INTO hotel_rooms(roomNumber,roomId) VALUES     (\(hotelRoom.roomNumberProperty),\(hotelRoom.roomIdProperty))"
-            do { try hotel.insertRecord(query: insertRoomQuery) }
-            catch { throw Result.failure(msg : "Room creation failed") }
+            do { try roomDataLayer.insertRoomData(hotelRoom : hotelRoom) }
+            catch { return .failure(DatabaseError.insertFailed(msg : "Room creation failed")) }
         }
-        print( "Room Created Successful")
+        return .success(())
     }
     func isRoomChecking() throws -> ([Room])
     {
-        let rooms = try hotel.executeQueryData(query: "select * from rooms")
-        var roomsArray : [Room] = []
-        for room in rooms
-        {
-            let roomId = room["roomId"] as! Int
-            let room_id = room["room_type_id"] as! Int
-            let bed_id = room["bed_id"] as! Int
-            let amenitie = room["amenities"] as! String
-            let price = (Float)(room["price"] as! Double)
-            if let roomType = RoomType(rawValue: room_id),
-               let bedType = BedType(rawValue: bed_id)
-            {
-                let amenities  = amenitie.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespaces) }
-                var roomss = Room(roomId : roomId,roomType: roomType, bedType: bedType, price: price, amenities: amenities)
-                    roomss.roomIdProperty = roomId
-                    roomsArray.append(roomss)
-            }
-            else
-            {
-                print("Invalid bed type or room type" )
-            }
-        }
-        return (roomsArray)
+        let rooms =  try roomDataLayer.getRoomData()
+        return rooms
     }
-    func isRoomAvailabilityChecking(roomId: Int, startDate: Date, endDate: Date)  throws -> (Bool, Int)
+    func isRoomAvailabilityChecking(roomId: Int, startDate: Date, endDate: Date)  throws ->
+         Result <Int,DatabaseError>
     {
-        let query = """
-                    SELECT hotel_rooms.roomNumber
-                    FROM hotel_rooms
-                    WHERE hotel_rooms.roomId = \(roomId)
-                    """
-         let roomNumbers = try hotel.executeQueryData(query: query)
-         for room in roomNumbers
+         let hotelRooms = try roomDataLayer.getHotelRoomData().filter({$0.roomIdProperty == roomId})
+         for hotelRoom in hotelRooms
          {
-             if let roomNumber = room["roomNumber"] as? Int
-             {
-                    let bookingQuery = """
-                                       SELECT bookingStartDate, bookingEndDate
-                                       FROM booking
-                                       WHERE roomNumber = \(roomNumber)
-                                       AND bookingStatusId = \(BookingStatus.confirmed.rawValue)
-                                       """
-                    let bookings = try hotel.executeQueryData(query: bookingQuery)
-                    var isAvailable = true
-                    if bookings.isEmpty
+             let bookings = try BookingDataLayer.getInstance().getAllBookings().filter { $0.bookingStatusProperty == .confirmed && $0.roomNumberProperty == hotelRoom.roomNumberProperty }
+                var flag = true
+                for booking in bookings
+                {
+                    let bookingDate = booking.roomBookingDateProperty
+                    if (!bookingDate.isEmpty)
                     {
-                        return (true, roomNumber)
-                    }
-                    for booking in bookings
-                    {
-                        if let bookingStartString = booking["bookingStartDate"] as? String,
-                           let bookingEndString = booking["bookingEndDate"] as? String,
-                           let bookingStart = Validation.convertStringToDate(formate: "dd-MM-yyyy", date:bookingStartString ),
-                           let bookingEnd = Validation.convertStringToDate(formate: "dd-MM-yyyy", date: bookingEndString )
+                        if (startDate < bookingDate.last! && endDate > bookingDate.first!)
                         {
-                            if startDate < bookingEnd && endDate > bookingStart
-                            {
-                                isAvailable = false
-                                break
-                            }
+                            flag = false
+                            break;
                         }
                     }
-                    if isAvailable
-                    {
-                        return (true, roomNumber)
-                    }
                 }
-            }
-        return (false, 0)
+                if flag
+                {
+                    return .success(hotelRoom.roomNumberProperty)
+                }
+         }
+        return .failure(.noRecordFound(msg: "This Type of Room is already booked during the requested dates"))
     }
-    func  isValidRoomNumber(roomId : Int) throws -> Bool
+    func isValidRoomNumber(roomId : Int) throws -> Bool
     {
-        let rooms = try hotel.executeQueryData(query: "SELECT * FROM Rooms WHERE roomId = \(roomId)")
-        return !(rooms.isEmpty)
+        return try roomDataLayer.getRoomData().contains(where: { $0.roomIdProperty == roomId })
     }
 }

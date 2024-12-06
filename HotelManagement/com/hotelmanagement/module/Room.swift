@@ -32,9 +32,17 @@ struct Room : CustomStringConvertible
     {
        return price 
     }
-    var roomPriceProperty : Float
+    var amenitiesProperty : [String]
     {
-        return price
+        return amenities
+    }
+    var roomTypeProperty : RoomType
+    {
+        return roomType
+    }
+    var bedTypeProperty : BedType
+    {
+        return bedType
     }
     static var counter : Int
     {

@@ -2,107 +2,66 @@ import Foundation
 class BookingViewModel : BookingViewModelService
 {
     private weak var bookingView : BookingViewService?
-    private let hotel  =  HotelDataLayer.getInstance()
+    private let bookingDataLayer =  BookingDataLayer.getInstance()
+    private let paymentDataLayer = PaymentDataLayer.getInstance()
     func setBookingView(bookingView: BookingViewService)
     {
         self.bookingView = bookingView
     }
     func
-    addedConfirmBooking (guest : Guest, roomNumber: Int, dates: [Date], noOfGuest: Int, stayingDays : Int) throws -> RoomBooking
+    addedConfirmBooking (guest : Guest, roomNumber: Int, dates: [Date], noOfGuest: Int, stayingDays : Int) throws ->  Result<RoomBooking,DatabaseError>
     {
         let booking : RoomBooking = RoomBooking(roomNumber: roomNumber, guestId: guest.guestIdProperty, noOfGuest: noOfGuest, roomBookingDate: dates,stayingDays: stayingDays)
         booking.bookingStatusProperty = .confirmed
-        let startDate = Validation.convertDateToString(formate: "dd-MM-yyyy", date: dates.first!)
-        let endDate   = Validation.convertDateToString(formate: "dd-MM-yyyy", date: dates.last!)
-        let bookingDate = Validation.convertDateToString(formate:"dd-MM-yyyy hh-mm-ss a" , date:  booking.bookingDateProperty)
-        let inserBookingQuery = """
-        INSERT INTO booking (
-            bookingId,bookingDate,roomNumber,guestId,noOfGuest,stayingDays, bookingStartDate,bookingEndDate,bookingStatusId
-        ) VALUES (
-            \(booking.bookingIdProperty), 
-            '\(bookingDate!)', 
-            \(roomNumber), 
-            \(guest.guestIdProperty), 
-            \(noOfGuest), 
-            \(stayingDays),
-            '\(startDate!)', 
-            '\(endDate!)',
-             \(booking.bookingStatusProperty.rawValue)
-        )
-        """
-        try hotel.insertRecord(query: inserBookingQuery)
-        return booking
+        do
+        {
+           try bookingDataLayer.insertBookingData(booking: booking)
+           return .success(booking)
+        }
+        catch
+        {
+            return .failure(DatabaseError.insertFailed(msg : " Booking Data storing failed"))
+        }
     }
     func isAvailableBookingHistory(guest: Guest, bookingStatus: BookingStatus) throws -> [RoomBooking]
     {
-        let bookingStatusQuery = """
-                    SELECT * 
-                    FROM booking 
-                    WHERE guestId = \(guest.guestIdProperty) 
-                    AND bookingStatusId = \(bookingStatus.rawValue)
-                    """
-        return  try getRoomBookingDetails(query: bookingStatusQuery)
-    }
-    func getRoomBookingDetails(query: String) throws -> [RoomBooking]
-    {
-        var roomBookings: [RoomBooking] = []
-        let bookings = try hotel.executeQueryData(query: query)
-        for booking in bookings
+        let bookings = try bookingDataLayer.getGuestBookings(guestId: guest.guestIdProperty)
+                .filter { $0.bookingStatusProperty == bookingStatus }
+        if bookings.isEmpty
         {
-            let bookingId   = booking ["bookingId"] as! Int
-            let bookingDate = booking ["bookingDate"] as! String
-            let roomNumber  = booking ["roomNumber"] as! Int
-            let guestId     = booking ["guestId"] as! Int
-            let noOfGuest   = booking ["noOfGuest"] as! Int
-            let stayingDays = booking ["stayingDays"] as! Int
-            let startDate   = booking ["bookingStartDate"] as! String
-            let endDate     = booking ["bookingEndDate"] as! String
-            let bookingStatusId = booking ["bookingStatusId"] as! Int
-            if  let startDates = Validation.convertStringToDate(formate: "dd-MM-yyyy", date:startDate),
-                let bookingDates = Validation.convertStringToDate(formate: "dd-MM-yyyy hh:mm:ss a", date:bookingDate),
-                let endDates = Validation.convertStringToDate(formate: "dd-MM-yyyy", date:endDate)
-            {
-                let bookingStatus = BookingStatus(rawValue: bookingStatusId)
-                var booking : [Date]   = []
-                booking.append(startDates)
-                booking.append(endDates)
-                let room = RoomBooking(bookingId: bookingId, bookingDate: bookingDates, roomNumber: roomNumber, guestId: guestId, noOfGuest: noOfGuest,roomBookingDate : booking , bookingStatus: bookingStatus!,stayingDays : stayingDays)
-                roomBookings.append(room)
-            }
+            return []
         }
-        return roomBookings
+        return bookings
     }
     func getRoomBookingDetails(bookingStatus : BookingStatus) throws
     {
-        let bookingStatusQuery = """
-                    select * from booking 
-                    where bookingStatusId = \(bookingStatus.rawValue)
-                    """
-        let bookings = try getRoomBookingDetails(query: bookingStatusQuery)
+        let bookings = try bookingDataLayer.getAllBookings()
+            .filter { $0.bookingStatusProperty == bookingStatus}
         try bookingView?.displayBookingDetails(roomBookings: bookings )
     }
     func getRoomBookingDetails() throws
     {
-        let  bookings  =  try getRoomBookingDetails(query: "select * from booking")
+        let  bookings = try bookingDataLayer.getAllBookings()
         try bookingView?.displayBookingDetails(roomBookings: bookings)
     }
     func getRoomBooking(bookingStatus : BookingStatus) throws -> [RoomBooking]
     {
-        let formattedDate = Validation.convertDateToString(formate: "dd-MM-yyyy", date: Date())
-        let bookingDateQuery = """
-                    select * from booking 
-                    where bookingStatusId = \(bookingStatus.rawValue)
-                    and bookingStartDate = '\(formattedDate!)'
-                    """
-        return try getRoomBookingDetails (query:  bookingDateQuery )
+        var bookings : [RoomBooking] =  []
+        if(bookingStatus == .confirmed)
+        {
+             bookings = try bookingDataLayer.getAllBookings().filter { $0.bookingStatusProperty == bookingStatus &&  $0.roomBookingDateProperty.first! < Date() }
+        }
+        else
+        {
+            bookings = try bookingDataLayer.getAllBookings().filter { $0.bookingStatusProperty == bookingStatus }
+        }
+        return bookings
     }
     func getValidBooking (guest: Guest) throws -> [RoomBooking]
     {
-        let guestQuery = """
-                     select * from  booking where
-                     guestId = \(guest.guestIdProperty) and bookingStatusId = \(BookingStatus.confirmed.rawValue)
-                    """
-        return try getRoomBookingDetails (query: guestQuery)
+        let bookings = try bookingDataLayer.getGuestBookings(guestId: guest.guestIdProperty)
+            .filter { $0.bookingStatusProperty == .confirmed &&  $0.roomBookingDateProperty.first! > Date() }
+        return bookings
     }
     func isValidBooking(guestBookings : [RoomBooking] , bookingId : Int) -> RoomBooking?
     {
@@ -122,42 +81,30 @@ class BookingViewModel : BookingViewModelService
     func setCancellationDetails(booking: RoomBooking, cancellationReason: String) throws
     {
         booking.bookingStatusProperty = BookingStatus.cancelled
-        let updateBookingStatus = """
-                                   update booking set bookingStatusId = \(BookingStatus.cancelled.rawValue) 
-                                   where bookingId = \(booking.bookingIdProperty)
-                                  """
-        try hotel.insertRecord(query: updateBookingStatus)
-        let date = Validation.convertDateToString(formate: "dd-MM-yyyy", date: Date())
-        let insertCancelRecord = """
-                                 insert into cancel_booking (bookingId,cancellationDate,cancellationReason)
-                                 values (\(booking.bookingIdProperty),'\(date!)', '\(cancellationReason)');
-                                 """
-        try hotel.insertRecord(query: insertCancelRecord)
-        let paymentS  =  """
-                          select payment_status_id from payment 
-                          where bookingId = \(booking.bookingIdProperty) 
-                          """
-        let payments = try hotel.executeQueryData(query: paymentS)
-        let payment = payments.first
-        let payment_id = payment?["payment_status_id"] as! Int
-        let PaymentStatusUpdate = PaymentStatus(rawValue: payment_id)
-        let paymentId = (PaymentStatusUpdate == .Success) ? PaymentStatus.Refunded : PaymentStatus.No_Paid
-        let updatePaymentStatus = """
-                                   update payment
-                                   set payment_status_id = \(paymentId.rawValue)
-                                   where bookingId = \(booking.bookingIdProperty) 
-                                   """
-        try hotel.insertRecord(query:updatePaymentStatus )
+        try bookingDataLayer.getUpdateBookingStatus(booking : booking)
+        let roomCancellation = RoomCancellation (bookingId: booking.bookingIdProperty, cancellationReason: cancellationReason)
+        try bookingDataLayer.insertCancelRoomRecord(roomCancellation: roomCancellation, booking : booking)
+        let payments   = try PaymentDataLayer.getInstance().getPaymentData()
+        var payment    = payments[booking.bookingIdProperty]!
+        if payment.paymentStatusProperty == PaymentStatus.Success
+        {
+            payment.setPaymentStatus(PaymentStatus.Refunded)
+        }
+        else
+        {
+            payment.setPaymentStatus(PaymentStatus.No_Paid)
+        }
+        try paymentDataLayer.updatePaymentStatus (payment: payment)
     }
     func checkBooking(bookingId: Int) throws -> (Bool,RoomBooking?)
     {
-        let bookingIdQuery = "select * from booking where bookingId = \(bookingId)"
-        let bookings : [RoomBooking] = try getRoomBookingDetails(query: bookingIdQuery)
-        if (bookings.isEmpty)
+        let bookings : [RoomBooking] = try bookingDataLayer.getAllBookings()
+        let roomBookings : [RoomBooking] =  bookings.filter { $0.bookingIdProperty == bookingId }
+        if (roomBookings.isEmpty)
         {
             return (false,nil)
         }
-        return (true,bookings.first!)
+        return (true,roomBookings.first!)
     }
     func checkBooking(roomBooking : RoomBooking) -> Bool
     {
@@ -170,30 +117,41 @@ class BookingViewModel : BookingViewModelService
     func setCheckInDetails(booking : RoomBooking) throws
     {
         booking.bookingStatusProperty = BookingStatus.checkin
-        let  bookingStatus =  "update booking set bookingStatusId = \(booking.bookingStatusProperty.rawValue) where bookingId = \(booking.bookingIdProperty)"
-        try hotel.insertRecord(query: bookingStatus)
-        let  roomNumber = "update hotel_rooms set available = \(0) where roomNumber = \(booking.roomNumberProperty)"
-        try hotel.insertRecord(query: roomNumber)
-        let currentDate = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a",date: Date())
-        _ =  LogMaintain(bookingId : booking.bookingIdProperty , checkIn : Date())
-        let addLog = "insert into login(bookingId,checkIn) values (\(booking.bookingIdProperty),'\(currentDate!)')"
-        try hotel.insertRecord(query: addLog)
+        try bookingDataLayer.getUpdateBookingStatus(booking : booking)
+        let payments = try paymentDataLayer.getPaymentData()
+        var payment = payments[booking.bookingIdProperty]
+        if payment != nil && payment!.paymentStatusProperty == PaymentStatus.Pending
+        {
+            payment?.setPaymentStatus(PaymentStatus.Success)
+            try paymentDataLayer.updatePaymentStatus(payment: payment!)
+        }
+        let hotelRooms = try RoomDataLayer.getInstance().getHotelRoomData()
+            .filter { $0.roomNumberProperty == booking.roomNumberProperty }
+        var hotelRoom = hotelRooms.first!
+        hotelRoom.changeAvailability(false)
+        try RoomDataLayer.getInstance().updateHotelRoomData(hotelRoom: hotelRoom)
+        let login =  LogMaintain(bookingId : booking.bookingIdProperty , checkIn : Date())
+        try LoginDataLayer.getInstance().insertLoginData(loginData : login)
     }
     func setCheckoutDetails(booking : RoomBooking) throws
     {
+        let loginDataLayer = LoginDataLayer.getInstance()
         booking.bookingStatusProperty = BookingStatus.checkout
-        let  bookingStatus =  "update booking set bookingStatusId = \(booking.bookingStatusProperty.rawValue) where bookingId = \(booking.bookingIdProperty)"
-        try hotel.insertRecord(query: bookingStatus)
-        let  roomNumber = "update hotel_rooms set available = \(1) where roomNumber = \(booking.roomNumberProperty)"
-        try hotel.insertRecord(query: roomNumber)
-        let currentDate = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a",date: Date())
-        let addLog = "update login set checkOut = '\(currentDate!)' where bookingId =(\(booking.bookingIdProperty))"
-        try hotel.insertRecord(query: addLog)
+        try bookingDataLayer.getUpdateBookingStatus(booking : booking)
+        let hotelRooms = try RoomDataLayer.getInstance().getHotelRoomData()
+            .filter { $0.roomNumberProperty == booking.roomNumberProperty }
+        var hotelRoom = hotelRooms.first!
+        hotelRoom.changeAvailability(true)
+        try RoomDataLayer.getInstance().updateHotelRoomData(hotelRoom: hotelRoom)
+        if  var login = try loginDataLayer.getLoginData(bookingId : booking.bookingIdProperty)
+        {
+            login.setCheckOut(Date())
+            try loginDataLayer.updateLoginData(loginData : login)
+        }
     }
     func isAvailableCheckOut(bookingId : Int) throws-> (Bool,RoomBooking?)
     {
-        let checkinQuery = "select * from booking where bookingId = \(bookingId) and bookingStatusId = \(BookingStatus.checkin.rawValue)"
-        let bookings = try getRoomBookingDetails (query: checkinQuery)
+        let bookings = try bookingDataLayer.getAllBookings().filter {$0.bookingIdProperty == bookingId  && $0.bookingStatusProperty == BookingStatus.checkin }
         if (bookings.isEmpty)
         {
             return (false,nil)

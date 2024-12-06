@@ -1,31 +1,22 @@
 import SQLite3
 import Foundation
-class HotelDataLayer
+struct SQLiteDatabase : DatabaseUtility
 {
-    private static var hotelDataLayer : HotelDataLayer? = nil
-    var db: OpaquePointer?
-    var dbPath: String = ""
-    private init()
+    static var db: OpaquePointer?
+    static var dbPath: String = ""
+    static func openDatabase() throws
     {
-         dbPath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("Demo.db").path
-        if sqlite3_open(dbPath, &db) == SQLITE_OK
-        {
-            print("Database connection established successfully.")
-        }
-        else
-        {
-            print("Failed to connect to SQLite database.")
-        }
+        dbPath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("Demo.db").path
+       if sqlite3_open(dbPath, &db) == SQLITE_OK
+       {
+           print("Database connection established successfully.")
+       }
+       else
+       {
+           throw DatabaseError.executionFailed(msg : "Failed to connect to SQLite database.")
+       }
     }
-    public static func getInstance() -> HotelDataLayer
-    {
-        if hotelDataLayer == nil
-        {
-            hotelDataLayer = HotelDataLayer()
-        }
-        return hotelDataLayer!
-    }
-    func createTable(createTableQuery: String) throws
+    static func createTable(createTableQuery: String) throws
     {
         var createTableStatement: OpaquePointer?
         if sqlite3_prepare_v2(db, createTableQuery, -1, &createTableStatement, nil) != SQLITE_OK {
@@ -43,7 +34,7 @@ class HotelDataLayer
             throw DatabaseError.finalizationFailed(msg :"Error finalizing create table statement: \(errorMsg)")
         }
     }
-    func insertRecord(query: String) throws
+    static func insertRecord(query: String) throws
     {
         var insertStatement: OpaquePointer?
         if sqlite3_prepare_v2(db, query, -1, &insertStatement, nil) != SQLITE_OK
@@ -66,7 +57,8 @@ class HotelDataLayer
             throw DatabaseError.finalizationFailed(msg : "Error finalizing query: \(errorMsg)")
         }
     }
-    func executeQueryData(query: String) throws -> [[String: Any]] {
+    static func executeQueryData(query: String) throws -> [[String: Any]]
+    {
         var result = [[String: Any]]()
         var queryStatement: OpaquePointer?
         if sqlite3_prepare_v2(db, query, -1, &queryStatement, nil) != SQLITE_OK {
@@ -86,25 +78,24 @@ class HotelDataLayer
                     let columnString = String(cString: columnName)
                     switch sqlite3_column_type(queryStatement, columnIndex)
                     {
-                    case SQLITE_TEXT:
-                        if let columnText = sqlite3_column_text(queryStatement, columnIndex)
-                        {
-                             row[columnString] = String(cString: columnText)
-                        }
-                    case SQLITE_INTEGER:
-                        let columnInt = sqlite3_column_int(queryStatement, columnIndex)
-                        row[columnString] = Int(columnInt)
-                    case SQLITE_FLOAT:
-                        let columnFloat = sqlite3_column_double(queryStatement, columnIndex)
-                        row[columnString] = columnFloat
-                    case SQLITE_NULL:
-                        row[columnString] = nil
-                    default:
-                        break
+                        case SQLITE_TEXT:
+                            if let columnText = sqlite3_column_text(queryStatement, columnIndex)
+                            {
+                                 row[columnString] = String(cString: columnText)
+                            }
+                        case SQLITE_INTEGER:
+                            let columnInt = sqlite3_column_int(queryStatement, columnIndex)
+                            row[columnString] = Int(columnInt)
+                        case SQLITE_FLOAT:
+                            let columnFloat = sqlite3_column_double(queryStatement, columnIndex)
+                            row[columnString] = columnFloat
+                        case SQLITE_NULL:
+                            row[columnString] = nil
+                        default:
+                            break
                     }
                 }
             }
-            
             result.append(row)
         }
         if sqlite3_finalize(queryStatement) != SQLITE_OK
@@ -114,7 +105,7 @@ class HotelDataLayer
         }
         return result
     }
-    func closeDatabase()
+    static func closeDatabase() throws
     {
         if db != nil
         {
@@ -125,9 +116,8 @@ class HotelDataLayer
             }
             else
             {
-                print("Error closing database: \(result)")
+                throw DatabaseError.preparationFailed(msg:"Error closing database: \(result)")
             }
         }
     }
 }
-

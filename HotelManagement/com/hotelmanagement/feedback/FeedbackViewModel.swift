@@ -2,60 +2,35 @@ import Foundation
 class FeedbackViewModel : FeedbackViewModelService
 {
     private weak var feedbackView  : FeedbackViewService?
-    private var hotel = HotelDataLayer.getInstance()
+    private var feedbackDataLayer   = FeedbackDataLayer.getInstance()
     func setFeedbackView(_ feedbackView: FeedbackViewService)
     {
         self.feedbackView  = feedbackView
     }
     func isAvailableFeedback(booking: RoomBooking) throws -> Bool
     {
-        let feedbackQuery =  """
-                      select * from feedback
-                      where bookingId = \(booking.bookingIdProperty)
-                     """
-       
-        if  try hotel.executeQueryData(query: feedbackQuery).isEmpty
+        let feedback : [Feedback] = try feedbackDataLayer.getFeedback().filter({$0.bookingIdProperty == booking.bookingIdProperty})
+        if feedback.isEmpty
         {
             return true
         }
-       return false
+        return false
     }
-    func createFeedback(bookingId : Int , rating : Int , comment : String) throws
+    func createFeedback(bookingId : Int , rating : Int , comment : String) throws -> Result<Feedback, DatabaseError>
     {
-        let date = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a", date: Date())
-        let insertfeedbackQuery = """
-                     INSERT INTO feedback (bookingId, date, rating, comment)
-                     VALUES (\(bookingId), '\(date!)', \(rating), '\(comment)');
-                    """
+        let feedback : Feedback = Feedback(bookingId: bookingId, rating: rating, comment: comment)
         do
         {
-            try hotel.insertRecord(query: insertfeedbackQuery)
-            print ("Feedback Added Successfully")
+            try  feedbackDataLayer.insertFeedback(feedback: feedback)
+            return .success(feedback)
         }
         catch
         {
-            throw Result.success(msg: "No Added Feedback")
+            return .failure(DatabaseError.insertFailed(msg: "Feedback insertion failed"))
         }
     }
-    func getFeedback() throws -> [Feedback]
+    func getFeedback() throws -> [Feedback] 
     {
-        let selectfeedbackQuery = """
-                     select * from feedback
-                    """
-        var feedbackArray : [Feedback] = []
-         let feedbacks = try hotel.executeQueryData(query: selectfeedbackQuery)
-        
-            for feedback in feedbacks
-            {
-                let bookingId = feedback["bookingId"] as! Int
-                let feedbackDate = feedback["date"] as! String
-                let rating = feedback["rating"] as! Int
-                let comment = feedback["comment"] as! String
-                if let feedbackDate = Validation.convertStringToDate(formate:"dd-MM-yyyy hh:mm:ss a", date: feedbackDate)
-                {
-                    feedbackArray.append(Feedback(bookingId: bookingId,date : feedbackDate ,rating: rating,comment: comment))
-                }
-            }
-        return feedbackArray
+         return try feedbackDataLayer.getFeedback()
     }
 }

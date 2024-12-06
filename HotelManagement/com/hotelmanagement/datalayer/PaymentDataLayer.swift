@@ -1,0 +1,50 @@
+class PaymentDataLayer
+{
+    private static var  paymentDataLayer : PaymentDataLayer? = nil
+    private init()
+    {
+    }
+    public static func getInstance() -> PaymentDataLayer
+    {
+        if paymentDataLayer == nil
+        {
+            paymentDataLayer = PaymentDataLayer()
+        }
+        return paymentDataLayer!
+    }
+    public func insertPaymentdata(payment : Payment) throws
+    {
+        let paymentInsertQuery  = """
+                      insert into payment(bookingId,amount,payment_status_id)
+                      values(
+                      \(payment.bookingIdProperty),
+                      \(payment.totalAmountProperty),
+                      \(payment.paymentStatusProperty.rawValue));
+                     """
+        try DataAccess.insertRecord(query: paymentInsertQuery)
+    }
+    public func getPaymentData() throws -> [Int:Payment]
+    {
+        let query = "select * from payment"
+        let payments = try DataAccess.executeQueryData(query: query)
+        var paymentData : [Int:Payment] = [:]
+        for payment in payments
+        {
+            if let bookingId = payment["bookingId"] as? Int,
+               let amount = payment["amount"] as? Double,
+               let paymentStatusId = payment["payment_status_id"] as? Int
+            {
+                let paymentStatus = PaymentStatus(rawValue: paymentStatusId)!
+                let amounts = Float(amount)
+                let payment = Payment(bookingId: bookingId,paymentStatus: paymentStatus , totalAmount: amounts)
+                paymentData[bookingId] = payment
+            }
+        }
+        return paymentData
+    }
+    public func updatePaymentStatus (payment: Payment) throws
+    {
+        let paymentUpdateQuery = "update payment set payment_status_id = \(payment.paymentStatusProperty.rawValue) where bookingId = \(payment.bookingIdProperty)"
+        try DataAccess.insertRecord(query: paymentUpdateQuery)
+    }
+}

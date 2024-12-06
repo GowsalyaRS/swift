@@ -16,6 +16,12 @@ struct HotelRoom
         roomNumber = HotelRoom.counter
         self.roomId     = roomId
     }
+    init (roomNumber : Int,roomId : Int,available : Bool)
+    {
+        self.roomNumber = roomNumber
+        self.roomId     = roomId
+        self.available  = available
+    }
     var roomIdProperty : Int
     {
         return roomId

@@ -21,6 +21,18 @@ struct LogMaintain
         self.bookingId = bookingId
         self.checkIn   = checkIn
     }
+    var bookingIdProperty : Int
+    {
+         return bookingId
+    }
+    var checkInProperty : Date
+    {
+        return checkIn
+    }
+    var checkOutProperty : Date?
+    {
+        return checkOut
+    }
     mutating func setCheckOut(_ checkOut : Date)
     {
         self.checkOut = checkOut

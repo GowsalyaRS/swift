@@ -32,9 +32,14 @@ public class LoginView : LoginViewService
                      case HotelOption.ForgetPassword.rawValue :
                           try forgetPassword()
                      case HotelOption.Exit.rawValue  :
+                         try DataAccess.closeDatabase()
                         return
                      default : print("Invalid choice")
                     }
+                }
+                catch let error as DatabaseError
+                {
+                    print ("\(error.localizedDescription)")
                 }
                 catch
                 {
@@ -43,7 +48,7 @@ public class LoginView : LoginViewService
             }
             else
             {
-                print("Invalid input")
+                print("Invalid input, Please enter a valid choice")
             }
         }
     }
@@ -69,7 +74,7 @@ public class LoginView : LoginViewService
      }
      func onAdminSuccess(guest : Guest)
      {
-        let adminProcess : AdminProcess = AdminProcess()
+         let adminProcess : AdminProcess = AdminProcess()
          adminProcess.adminInit(guest : guest)
      }
      func onGuestSuccess(guest : Guest)

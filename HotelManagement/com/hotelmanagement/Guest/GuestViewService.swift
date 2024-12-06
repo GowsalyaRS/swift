@@ -1,6 +1,6 @@
 protocol GuestViewService : AnyObject
 {
     func inputGetGuestSignupDetails() throws
-    func displayGuestDetails(guests : [Guest])
+    func displayGuestDetails(guests : [Guest]) throws
     func inputGetChangePassword() throws
 }

@@ -33,7 +33,7 @@ struct Payment : CustomStringConvertible
        return """
                 Payment Status         :  \(paymentStatus)
                 Total Amount           :  \(totalAmount)
-               -------------------------------------- 
+               ----------------------------------------------------------
                """
     }
 }

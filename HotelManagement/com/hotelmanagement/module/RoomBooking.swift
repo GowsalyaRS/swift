@@ -38,21 +38,33 @@ class RoomBooking :  CustomStringConvertible
         self.bookingStatus   = bookingStatus
         self.stayingDays     = stayingDays
     }
+    var bookingIdProperty: Int
+    {
+        return bookingId
+    }
     var roomBookingDateProperty: [Date]
     {
         return roomBookingDate
-    }
-    var roomNumberProperty: Int
-    {
-        return roomNumber
     }
     var bookingDateProperty: Date
     {
         return bookingDate
     }
-    var bookingIdProperty: Int
+    var roomNumberProperty: Int
     {
-        return bookingId
+        return roomNumber
+    }
+    var guestIdProperty: Int
+    {
+        return guestId
+    }
+    var noOfGuestProperty: Int
+    {
+        return noOfGuest
+    }
+    var stayingDaysProperty: Int
+    {
+        return stayingDays
     }
     var bookingStatusProperty: BookingStatus
     {
@@ -70,7 +82,7 @@ class RoomBooking :  CustomStringConvertible
         let startDate = Validation.convertDateToString(formate:"dd-MM-yyyy",date: roomBookingDate.first!) ?? ""
         let endDate   = Validation.convertDateToString(formate:"dd-MM-yyyy",date: roomBookingDate.last!) ?? ""
         return """
-                --------------------------------------
+                ---------------------------------------------------------
                 Booking Id             :  \(bookingId)
                 Booking Date           :  \(bookingDate)
                 Room Number            :  \(roomNumber)

@@ -19,6 +19,10 @@ struct Feedback : CustomStringConvertible
         self.rating     = rating
         self.comment    = comment.replacingOccurrences(of: "'", with: "")
     }
+    var bookingIdProperty  : Int { return bookingId }
+    var dateProperty      : Date  { return date }
+    var ratingProperty    : Int  { return rating }
+    var commentProperty   : String{ return comment }
     var description: String
     {
         let feedbackDate = Validation.convertDateToString(formate: "dd-MM-yyyy hh:mm:ss a", date: date)!

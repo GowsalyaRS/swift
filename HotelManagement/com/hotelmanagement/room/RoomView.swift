@@ -16,13 +16,21 @@ class RoomView : RoomViewService
         let price    = ValidInput.getPrice(inputName  : "Enter the price of the room   : ");
         if price == 0  { return }
         let amenities = ValidInput.getAmenities(inputName:"Enter the amenities              : ")
-        try roomViewModel.createRoom(roomType: roomType!, bedType: bedType!, price: price, amenities: amenities, noOfRoom:noOfRoom )
+        let createdRoom =  try roomViewModel.createRoom(roomType: roomType!, bedType: bedType!, price: price, amenities: amenities, noOfRoom:noOfRoom )
+        switch createdRoom
+        {
+            case .success():
+                print ("Room Created Successfully")
+            case .failure(let error):
+                throw error
+        }
     }
-    func viewRoomDetails(room  rooms :  [Room]) throws
+    func viewRoomDetails(rooms :  [Room])  throws
     {
+        print ("view room details : ")
         if rooms.isEmpty
         {
-            throw Result.failure(msg: "No Room Found")
+            throw DatabaseError.noRecordFound(msg : "No Room Found")
         }
         print ("Room Details:")
         for room in rooms

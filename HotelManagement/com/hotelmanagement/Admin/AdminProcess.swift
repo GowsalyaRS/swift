@@ -2,9 +2,9 @@ struct AdminProcess
 {
     func adminInit(guest : Guest)
     {
-        print("\t\t----------------------------------------------------------------------------------")
-        print("\t\t\tWelcome, \(guest.nameProperty) You have access to the Admin interface now ")
-        ("\t\t----------------------------------------------------------------------------------")
+        print("\t\t----------------------------------------------------------------------------------",
+              "\n\t\t\tWelcome, \(guest.nameProperty.uppercased()) You have access to the Admin interface now ",
+        "\n\t\t----------------------------------------------------------------------------------")
         while (true)
         {
             print("-------------------------------------------")
@@ -37,9 +37,13 @@ struct AdminProcess
                         default : print("Invalid choice")
                     }
                 }
-                catch
+                catch let error as DatabaseError
                 {
-                    print("\(error.localizedDescription)")
+                    print ("\(error.localizedDescription)")
+                }
+                catch let error
+                {
+                    print ("\(error.localizedDescription)")
                 }
             }
             else
@@ -74,14 +78,18 @@ struct AdminProcess
                         default : print("Invalid choice")
                     }
                 }
-                catch
+                catch let error as DatabaseError
+                {
+                    print ("\(error.localizedDescription)")
+                }
+                catch let error
                 {
                     print ("\(error.localizedDescription)")
                 }
             }
             else
             {
-                print("Invalid input")
+                print("Invalid input, Please enter a valid choice")
             }
         }
     }
@@ -90,7 +98,7 @@ struct AdminProcess
         let guestViewModel  = GuestViewModel() 
         let guestView   : GuestViewService = GuestView(guestViewModel: guestViewModel) as GuestViewService
         guestViewModel.setGuestView(guestView: guestView)
-        try guestView.displayGuestDetails(guests:guestViewModel.getGuestDeatils())
+        try guestView.displayGuestDetails(guests:guestViewModel.getGuestData())
     }
     func bookingProcess() throws
     {
@@ -104,7 +112,7 @@ struct AdminProcess
         let feedbackViewModel   = FeedbackViewModel()
         let feedbackView  : FeedbackViewService    = FeedbackView(feedbackViewModel: feedbackViewModel)
         feedbackViewModel.setFeedbackView(feedbackView)
-       feedbackView.displayFeedback(feedback: try feedbackViewModel.getFeedback())
+        try feedbackView.displayFeedback(feedback: try feedbackViewModel.getFeedback())
     }
     func checkin() throws
     {
@@ -114,8 +122,7 @@ struct AdminProcess
         let bookings =  try bookingViewModel.getRoomBooking(bookingStatus : BookingStatus.confirmed)
         if bookings.isEmpty
         {
-            print ("No Available room checkin date today at hotel")
-            return
+            throw DatabaseError.noRecordFound(msg :"No Available room checkin date today at hotel")
         }
         try bookingView.displayRoomBookingDetails(bookings: bookings)
         try bookingView.getInputCheckInBooking()
@@ -128,19 +135,10 @@ struct AdminProcess
         let bookings =  try bookingViewModel.getRoomBooking(bookingStatus : BookingStatus.checkin)
         if bookings.isEmpty
         {
-            print ("No Available room checkout date today at hotel")
-            return
+            throw DatabaseError.noRecordFound(msg :"No Available room checkout date today at hotel")
         }
         try bookingView.displayRoomBookingDetails(bookings: bookings)
         try  bookingView.getInputCheckOutBooking()
-    }
-    func roomDetails() throws
-    {
-        let roomViewModel :  RoomViewModelService = RoomViewModel() as RoomViewModelService
-        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
-        roomViewModel.setRoomView(roomView: roomView)
-        let rooms = try roomViewModel.isRoomChecking()
-       try roomView.viewRoomDetails(room : rooms)
     }
     func addRooms() throws
     {
@@ -148,6 +146,14 @@ struct AdminProcess
         let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
         roomViewModel.setRoomView(roomView: roomView)
         try  roomView.getRoomSetupDetails()
+    }
+    func roomDetails() throws
+    {
+        let roomViewModel :  RoomViewModelService = RoomViewModel() as RoomViewModelService
+        let roomView : RoomViewService = RoomView(roomViewModel: roomViewModel) as RoomViewService
+        roomViewModel.setRoomView(roomView: roomView)
+        let rooms = try roomViewModel.isRoomChecking()
+        try roomView.viewRoomDetails(rooms  : rooms)
     }
 }
 
