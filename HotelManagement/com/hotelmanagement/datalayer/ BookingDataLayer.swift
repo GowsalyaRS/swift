@@ -95,6 +95,43 @@ class BookingDataLayer
                                  """
         try DataAccess.insertRecord(query: cancelRecord)
     }
+    func getGuestStatusBookings(guestId: Int,bookingStatus : BookingStatus) throws -> [RoomBooking]
+    {
+        let bookingStatusQuery = """
+                                 SELECT * 
+                                 FROM booking 
+                                 WHERE guestId = \(guestId)  and bookingStatusId = \(bookingStatus.rawValue)
+                                 """
+        return  try getRoomBookingDetails(query: bookingStatusQuery)
+    }
+    func getStatusBookings(bookingStatus : BookingStatus)  throws -> [RoomBooking]
+    {
+        let bookingStatusQuery = """
+                                 SELECT * 
+                                 FROM booking 
+                                 WHERE bookingStatusId = \(bookingStatus.rawValue)
+                                 """
+        return  try getRoomBookingDetails(query: bookingStatusQuery)
+    }
+    func getBookingIdData (bookingId: Int) throws -> [RoomBooking]
+    {
+        let bookingStatusQuery = """
+                                 SELECT * 
+                                 FROM booking 
+                                 WHERE  bookingId = \(bookingId)
+                                 """
+        return  try getRoomBookingDetails(query: bookingStatusQuery)
+    }
+    func getStatusBookings(bookingStatus:  BookingStatus, roomNumber : Int) throws -> [RoomBooking]
+    {
+        let bookingStatusQuery = """
+                                 SELECT * 
+                                 FROM booking 
+                                 WHERE bookingStatusId = \(bookingStatus.rawValue)
+                                 and roomNumber = \(roomNumber)
+                                 """
+        return  try getRoomBookingDetails(query: bookingStatusQuery)
+    }
 }
 
 

@@ -29,10 +29,10 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
     func isRoomAvailabilityChecking(roomId: Int, startDate: Date, endDate: Date)  throws ->
          Result <Int,DatabaseError>
     {
-         let hotelRooms = try roomDataLayer.getHotelRoomData().filter({$0.roomIdProperty == roomId})
+        let hotelRooms = try roomDataLayer.getHotelRoomData(roomId: roomId)
          for hotelRoom in hotelRooms
          {
-             let bookings = try BookingDataLayer.getInstance().getAllBookings().filter { $0.bookingStatusProperty == .confirmed && $0.roomNumberProperty == hotelRoom.roomNumberProperty }
+             let bookings = try BookingDataLayer.getInstance().getStatusBookings(bookingStatus:  BookingStatus.confirmed, roomNumber : hotelRoom.roomNumberProperty)
                 var flag = true
                 for booking in bookings
                 {
@@ -55,6 +55,11 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
     }
     func isValidRoomNumber(roomId : Int) throws -> Bool
     {
-        return try roomDataLayer.getRoomData().contains(where: { $0.roomIdProperty == roomId })
+        let result = try roomDataLayer.getRoomData( roomId : roomId)
+        if result.isEmpty
+        {
+            return false
+        }
+        return true
     }
 }

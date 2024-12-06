@@ -21,8 +21,12 @@ class GuestViewModel : GuestViewModelService
     }
     func isAvailablePhoneNo(phoneNo : Int64) throws -> Bool
     {
-        return try guestDataLayer.getGuest().contains{ guest in
-            guest.phoneNoProperty == phoneNo }
+        let guests = try guestDataLayer.getGuest(phoneNo : phoneNo)
+        if guests.isEmpty
+        {
+            return false
+        }
+        return true
     }
     func createAuthendication(guestId: Int, username: String, password: String) throws ->  Result <GuestAuthentication,DatabaseError>
     {
@@ -39,7 +43,11 @@ class GuestViewModel : GuestViewModelService
     }
     func changePassword(phoneNo : Int64 , userName : String , password : String) throws -> Result<Void,DatabaseError>
     {
-        let guestsArray : [Guest] = try guestDataLayer.getGuest().filter { $0.phoneNoProperty == phoneNo }
+        let guestsArray : [Guest] = try guestDataLayer.getGuest(phoneNo : phoneNo)
+        if guestsArray.isEmpty
+        {
+            throw DatabaseError.noRecordFound(msg : "Phone number is not found")
+        }
         let guest = guestsArray.first
         let guestId = guest!.guestIdProperty
         let guestAuthentication : GuestAuthentication = GuestAuthentication(guestId: guestId, username: userName, password: password)

@@ -12,11 +12,10 @@ class GuestDataLayer
         }
         return guestDataLayer!
     }
-    func getGuest() throws -> [Guest] 
+    func getGuestDetails(query : String) throws -> [Guest]
     {
-        let guestQuery = "SELECT * FROM guests"
         var guestsArray : [Guest] = []
-        let guests = try DataAccess.executeQueryData(query: guestQuery )
+        let guests = try DataAccess.executeQueryData(query: query )
         for guest in guests
         {
             let guestId = guest["guestId"] as! Int
@@ -34,6 +33,11 @@ class GuestDataLayer
             }
         }
         return guestsArray
+    }
+    func getGuest() throws -> [Guest]
+    {
+        let guestQuery = "SELECT * FROM guests"
+        return try getGuestDetails(query: guestQuery)
     }
     func getAuthendicationData() throws -> [GuestAuthentication]
     {
@@ -73,6 +77,12 @@ class GuestDataLayer
                           AND guestId =\(guestAuthentication.guestIdProperty)
                           """
         try  DataAccess.insertRecord(query: updateQuery)
+    }
+    func getGuest(phoneNo : Int64) throws -> [Guest]
+    {
+        let phoneNoString = String(phoneNo)
+        let query = "select * from guests where phoneNo = \(phoneNoString)"
+        return try getGuestDetails(query: query)
     }
 }
 

@@ -47,4 +47,19 @@ class PaymentDataLayer
         let paymentUpdateQuery = "update payment set payment_status_id = \(payment.paymentStatusProperty.rawValue) where bookingId = \(payment.bookingIdProperty)"
         try DataAccess.insertRecord(query: paymentUpdateQuery)
     }
+    public func getPaymentBooking (bookingId: Int) throws -> Payment?
+    {
+        let query = "select * from payment where bookingId = \(bookingId)"
+        let payments = try DataAccess.executeQueryData(query: query)
+        guard let payment = payments.first else { return nil }
+        if let bookingId = payment["bookingId"] as? Int,
+           let amounts = (payment["amount"] as? Double),
+           let paymentStatusId = payment["payment_status_id"] as? Int
+        {
+            let amount =  Float(amounts)
+            let paymentStatus = PaymentStatus(rawValue: paymentStatusId)
+            return Payment(bookingId: bookingId, paymentStatus: paymentStatus!, totalAmount: amount )
+        }
+        return nil
+    }
 }

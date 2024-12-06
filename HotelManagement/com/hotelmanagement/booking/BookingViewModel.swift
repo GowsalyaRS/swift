@@ -25,8 +25,7 @@ class BookingViewModel : BookingViewModelService
     }
     func isAvailableBookingHistory(guest: Guest, bookingStatus: BookingStatus) throws -> [RoomBooking]
     {
-        let bookings = try bookingDataLayer.getGuestBookings(guestId: guest.guestIdProperty)
-                .filter { $0.bookingStatusProperty == bookingStatus }
+        let bookings = try bookingDataLayer.getGuestStatusBookings(guestId: guest.guestIdProperty,bookingStatus : bookingStatus)
         if bookings.isEmpty
         {
             return []
@@ -35,8 +34,7 @@ class BookingViewModel : BookingViewModelService
     }
     func getRoomBookingDetails(bookingStatus : BookingStatus) throws
     {
-        let bookings = try bookingDataLayer.getAllBookings()
-            .filter { $0.bookingStatusProperty == bookingStatus}
+        let bookings = try bookingDataLayer.getStatusBookings(bookingStatus : bookingStatus)
         try bookingView?.displayBookingDetails(roomBookings: bookings )
     }
     func getRoomBookingDetails() throws
@@ -49,18 +47,18 @@ class BookingViewModel : BookingViewModelService
         var bookings : [RoomBooking] =  []
         if(bookingStatus == .confirmed)
         {
-             bookings = try bookingDataLayer.getAllBookings().filter { $0.bookingStatusProperty == bookingStatus &&  $0.roomBookingDateProperty.first! < Date() }
+            bookings = try bookingDataLayer.getStatusBookings(bookingStatus : bookingStatus).filter{$0.roomBookingDateProperty.first! < Date() }
         }
         else
         {
-            bookings = try bookingDataLayer.getAllBookings().filter { $0.bookingStatusProperty == bookingStatus }
+            bookings = try bookingDataLayer.getStatusBookings(bookingStatus : bookingStatus)
         }
         return bookings
     }
     func getValidBooking (guest: Guest) throws -> [RoomBooking]
     {
-        let bookings = try bookingDataLayer.getGuestBookings(guestId: guest.guestIdProperty)
-            .filter { $0.bookingStatusProperty == .confirmed &&  $0.roomBookingDateProperty.first! > Date() }
+        let bookings = try bookingDataLayer.getGuestStatusBookings(guestId: guest.guestIdProperty, bookingStatus: BookingStatus.confirmed)
+            .filter { $0.roomBookingDateProperty.first! > Date()}
         return bookings
     }
     func isValidBooking(guestBookings : [RoomBooking] , bookingId : Int) -> RoomBooking?
@@ -84,22 +82,22 @@ class BookingViewModel : BookingViewModelService
         try bookingDataLayer.getUpdateBookingStatus(booking : booking)
         let roomCancellation = RoomCancellation (bookingId: booking.bookingIdProperty, cancellationReason: cancellationReason)
         try bookingDataLayer.insertCancelRoomRecord(roomCancellation: roomCancellation, booking : booking)
-        let payments   = try PaymentDataLayer.getInstance().getPaymentData()
-        var payment    = payments[booking.bookingIdProperty]!
-        if payment.paymentStatusProperty == PaymentStatus.Success
+       if var payment  = try PaymentDataLayer.getInstance().getPaymentBooking(bookingId: booking.bookingIdProperty)
         {
-            payment.setPaymentStatus(PaymentStatus.Refunded)
-        }
-        else
-        {
-            payment.setPaymentStatus(PaymentStatus.No_Paid)
-        }
-        try paymentDataLayer.updatePaymentStatus (payment: payment)
+           if payment.paymentStatusProperty == PaymentStatus.Success
+           {
+               payment.setPaymentStatus(PaymentStatus.Refunded)
+           }
+           else
+           {
+               payment.setPaymentStatus(PaymentStatus.No_Paid)
+           }
+           try paymentDataLayer.updatePaymentStatus (payment: payment)
+       }
     }
     func checkBooking(bookingId: Int) throws -> (Bool,RoomBooking?)
     {
-        let bookings : [RoomBooking] = try bookingDataLayer.getAllBookings()
-        let roomBookings : [RoomBooking] =  bookings.filter { $0.bookingIdProperty == bookingId }
+        let roomBookings : [RoomBooking] =  try bookingDataLayer.getBookingIdData(bookingId: bookingId)
         if (roomBookings.isEmpty)
         {
             return (false,nil)
@@ -125,9 +123,7 @@ class BookingViewModel : BookingViewModelService
             payment?.setPaymentStatus(PaymentStatus.Success)
             try paymentDataLayer.updatePaymentStatus(payment: payment!)
         }
-        let hotelRooms = try RoomDataLayer.getInstance().getHotelRoomData()
-            .filter { $0.roomNumberProperty == booking.roomNumberProperty }
-        var hotelRoom = hotelRooms.first!
+        var hotelRoom =  try RoomDataLayer.getInstance().getRoomNumber(roomNumber: booking.roomNumberProperty)!
         hotelRoom.changeAvailability(false)
         try RoomDataLayer.getInstance().updateHotelRoomData(hotelRoom: hotelRoom)
         let login =  LogMaintain(bookingId : booking.bookingIdProperty , checkIn : Date())
@@ -138,9 +134,7 @@ class BookingViewModel : BookingViewModelService
         let loginDataLayer = LoginDataLayer.getInstance()
         booking.bookingStatusProperty = BookingStatus.checkout
         try bookingDataLayer.getUpdateBookingStatus(booking : booking)
-        let hotelRooms = try RoomDataLayer.getInstance().getHotelRoomData()
-            .filter { $0.roomNumberProperty == booking.roomNumberProperty }
-        var hotelRoom = hotelRooms.first!
+        var hotelRoom =  try RoomDataLayer.getInstance().getRoomNumber(roomNumber: booking.roomNumberProperty)!
         hotelRoom.changeAvailability(true)
         try RoomDataLayer.getInstance().updateHotelRoomData(hotelRoom: hotelRoom)
         if  var login = try loginDataLayer.getLoginData(bookingId : booking.bookingIdProperty)
@@ -151,11 +145,11 @@ class BookingViewModel : BookingViewModelService
     }
     func isAvailableCheckOut(bookingId : Int) throws-> (Bool,RoomBooking?)
     {
-        let bookings = try bookingDataLayer.getAllBookings().filter {$0.bookingIdProperty == bookingId  && $0.bookingStatusProperty == BookingStatus.checkin }
-        if (bookings.isEmpty)
+        let bookings = try bookingDataLayer.getBookingIdData(bookingId: bookingId)
+        if (!bookings.isEmpty && bookings.first!.bookingStatusProperty == BookingStatus.checkin)
         {
-            return (false,nil)
+            return (true,bookings.first!)
         }
-        return (true,bookings.first!)
+        return (false,nil)
     }
 }

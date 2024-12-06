@@ -9,7 +9,7 @@ public class LoginViewModel : LoginViewModelService
      {
          let guestDataLayer = GuestDataLayer.getInstance()
              if let guestId = try guestDataLayer.getAuthendicationData().first(where: { $0.usernameProperty == name && $0.passwordProperty == password })?.guestIdProperty
-          {
+           {
                  if let guest = try guestDataLayer.getGuest().first(where: { $0.guestIdProperty == guestId })
                  {
                      if guest.roleProperty == .Guest

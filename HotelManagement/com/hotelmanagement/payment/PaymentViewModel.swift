@@ -30,19 +30,22 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
     }
     func isPaymentChecking(roomBooking: RoomBooking) throws -> Bool
     {
-        let payments : [Int:Payment] = try paymentDataLayer.getPaymentData()
-        let payment = payments[roomBooking.bookingIdProperty]
-        if payment?.paymentStatusProperty == PaymentStatus.Success
+        if let payment =  try paymentDataLayer.getPaymentBooking(bookingId: roomBooking.bookingIdProperty)
         {
-            return true
+            if payment.paymentStatusProperty == PaymentStatus.Success
+            {
+                return true
+            }
         }
         return false
     }
     func getTotalAmount(roomBooking : RoomBooking) throws -> Float
     {
-        let payments : [Int:Payment] = try paymentDataLayer.getPaymentData()
-        let payment = payments[roomBooking.bookingIdProperty]
-        return  payment?.totalAmountProperty ?? 0.0
+        if let payment = try paymentDataLayer.getPaymentBooking(bookingId: roomBooking.bookingIdProperty)
+        {
+            return  payment.totalAmountProperty
+        }
+        return  0.0
     }
 }
  

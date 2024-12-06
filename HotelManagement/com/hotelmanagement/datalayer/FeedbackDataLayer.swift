@@ -12,13 +12,10 @@ class FeedbackDataLayer
         }
         return feedbackDataLayer!
     }
-    func getFeedback() throws -> [Feedback]
+    func getFeedbackDetails(query : String) throws -> [Feedback]
     {
-        let selectfeedbackQuery = """
-                                  select * from feedback
-                                  """
         var feedbackArray : [Feedback] = []
-        let feedbacks = try  DataAccess.executeQueryData(query: selectfeedbackQuery)
+        let feedbacks = try  DataAccess.executeQueryData(query: query)
         for feedback in feedbacks
         {
             let bookingId = feedback["bookingId"] as! Int
@@ -32,6 +29,13 @@ class FeedbackDataLayer
         }
         return feedbackArray
     }
+    func getFeedback() throws -> [Feedback]
+    {
+        let selectfeedbackQuery = """
+                                  select * from feedback
+                                  """
+        return  try getFeedbackDetails(query: selectfeedbackQuery)
+    }
     func insertFeedback(feedback: Feedback) throws
     {
         let date = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a", date: feedback.dateProperty)
@@ -40,5 +44,13 @@ class FeedbackDataLayer
                                   VALUES (\(feedback.bookingIdProperty), '\(date!)', \(feedback.ratingProperty), '\(feedback.commentProperty)');
                                   """
         try DataAccess.insertRecord(query: insertfeedbackQuery)
+    }
+    func getFeedback(bookingId : Int) throws -> [Feedback]
+    {
+        let feedbackQuery = """
+                              select * from feedback 
+                              where bookingId = \(bookingId)
+                            """
+        return  try getFeedbackDetails(query: feedbackQuery)
     }
 }

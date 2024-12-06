@@ -9,7 +9,7 @@ class FeedbackViewModel : FeedbackViewModelService
     }
     func isAvailableFeedback(booking: RoomBooking) throws -> Bool
     {
-        let feedback : [Feedback] = try feedbackDataLayer.getFeedback().filter({$0.bookingIdProperty == booking.bookingIdProperty})
+        let feedback : [Feedback] = try feedbackDataLayer.getFeedback(bookingId : booking.bookingIdProperty)
         if feedback.isEmpty
         {
             return true
