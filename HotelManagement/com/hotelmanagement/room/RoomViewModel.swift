@@ -2,7 +2,7 @@ import Foundation
 class RoomViewModel : RoomViewModelService,RoomDelegation
 {
     private weak var roomView : RoomViewService?
-    private var  roomDataLayer = RoomDataLayer.getInstance()
+    private var  roomDataLayer = RoomDataLayer()
     func setRoomView( roomView: RoomViewService)
     {
         self.roomView = roomView
@@ -27,30 +27,31 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
         return rooms
     }
     func isRoomAvailabilityChecking(roomId: Int, startDate: Date, endDate: Date)  throws ->
-         Result <Int,DatabaseError>
+    Result <Int,DatabaseError>
     {
         let hotelRooms = try roomDataLayer.getHotelRoomData(roomId: roomId)
-         for hotelRoom in hotelRooms
-         {
-             let bookings = try BookingDataLayer.getInstance().getStatusBookings(bookingStatus:  BookingStatus.confirmed, roomNumber : hotelRoom.roomNumberProperty)
-                var flag = true
-                for booking in bookings
+        for hotelRoom in hotelRooms
+        {
+            let bookingViewModel = BookingViewModel()
+            let bookings = try bookingViewModel.getStatusBookings(bookingStatus:  BookingStatus.confirmed, roomNumber : hotelRoom.roomNumberProperty)
+            var flag = true
+            for booking in bookings
+            {
+                let bookingDate = booking.roomBookingDateProperty
+                if (!bookingDate.isEmpty)
                 {
-                    let bookingDate = booking.roomBookingDateProperty
-                    if (!bookingDate.isEmpty)
+                    if (startDate < bookingDate.last! && endDate > bookingDate.first!)
                     {
-                        if (startDate < bookingDate.last! && endDate > bookingDate.first!)
-                        {
-                            flag = false
-                            break;
-                        }
+                        flag = false
+                        break;
                     }
                 }
-                if flag
-                {
-                    return .success(hotelRoom.roomNumberProperty)
-                }
-         }
+            }
+            if flag
+            {
+                return .success(hotelRoom.roomNumberProperty)
+            }
+        }
         return .failure(.noRecordFound(msg: "This Type of Room is already booked during the requested dates"))
     }
     func isValidRoomNumber(roomId : Int) throws -> Bool
@@ -61,5 +62,23 @@ class RoomViewModel : RoomViewModelService,RoomDelegation
             return false
         }
         return true
+    }
+    func updateRoomStatus(roomNumber : Int,roomStatus : Bool) throws
+    {
+        var hotelRoom =  try roomDataLayer.getRoomNumber(roomNumber: roomNumber)
+        if hotelRoom != nil
+        {
+            hotelRoom?.changeAvailability(roomStatus)
+            try  roomDataLayer.updateHotelRoomData(hotelRoom: hotelRoom!)
+        }
+    }
+    func getRoomData(roomNumber : Int) throws -> Room?
+    {
+        let rooms = try  roomDataLayer.getRoomData(roomNumber : roomNumber)
+        if rooms.isEmpty
+        {
+            return nil
+        }
+        return rooms.first!
     }
 }

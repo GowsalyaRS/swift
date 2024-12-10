@@ -1,17 +1,5 @@
 class GuestDataLayer
 {
-    private static var  guestDataLayer : GuestDataLayer? = nil
-    private init()
-    {
-    }
-    public static func getInstance() -> GuestDataLayer
-    {
-        if guestDataLayer == nil
-        {
-            guestDataLayer = GuestDataLayer()
-        }
-        return guestDataLayer!
-    }
     func getGuestDetails(query : String) throws -> [Guest]
     {
         var guestsArray : [Guest] = []
@@ -39,11 +27,10 @@ class GuestDataLayer
         let guestQuery = "SELECT * FROM guests"
         return try getGuestDetails(query: guestQuery)
     }
-    func getAuthendicationData() throws -> [GuestAuthentication]
+    func getAuthendicationData(query : String) throws -> [GuestAuthentication]
     {
-        let guestAuthenticationQuery = "SELECT * FROM guest_authentication"
         var guestAuthenticationArray : [GuestAuthentication] = []
-        let guestAuthentications = try DataAccess.executeQueryData(query: guestAuthenticationQuery )
+        let guestAuthentications = try DataAccess.executeQueryData(query: query)
         for guestAuthentication in guestAuthentications
         {
             let guestId = guestAuthentication["guestId"] as! Int
@@ -53,6 +40,11 @@ class GuestDataLayer
             guestAuthenticationArray.append(guestAuthenticationDetails)
         }
         return guestAuthenticationArray
+    }
+    func getAuthendicationData() throws -> [GuestAuthentication]
+    {
+        let guestAuthenticationQuery = "SELECT * FROM guest_authentication"
+        return try getAuthendicationData(query : guestAuthenticationQuery)
     }
     func insertGuestData(guest: Guest)  throws
     {
@@ -83,6 +75,23 @@ class GuestDataLayer
         let phoneNoString = String(phoneNo)
         let query = "select * from guests where phoneNo = \(phoneNoString)"
         return try getGuestDetails(query: query)
+    }
+    func getGuest(username : String , password : String) throws -> [Guest]
+    {
+        let guestQuery = """
+                          select * from guests  where guestId in ( select guestId  from guest_authentication where  username = '\(username)' and password = '\(password)')
+                         """
+        return try getGuestDetails(query: guestQuery)
+    }
+    func isAvailableUserName (username: String) throws -> Bool
+    {
+        let query = "select * from guest_authentication where username = '\(username)'"
+        let authenticationData = try getAuthendicationData(query: query)
+        if authenticationData.isEmpty
+        {
+            return true
+        }
+        return false
     }
 }
 

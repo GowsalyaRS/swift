@@ -32,6 +32,8 @@ struct AdminProcess
                            try checkout()
                         case AdminOption.Room_Booking_Checkin.rawValue  :
                            try checkin()
+                        case AdminOption.Log_Details.rawValue:
+                          try logDetails()
                         case AdminOption.LogOut.rawValue:
                             return
                         default : print("Invalid choice")
@@ -154,6 +156,14 @@ struct AdminProcess
         roomViewModel.setRoomView(roomView: roomView)
         let rooms = try roomViewModel.isRoomChecking()
         try roomView.viewRoomDetails(rooms  : rooms)
+    }
+    func logDetails() throws
+    {
+        let  logMaintainViewModel = LogMaintainViewModel()
+        let logMaintainView  = LogMaintainView(logMaintainViewModel: logMaintainViewModel)
+        logMaintainViewModel.setLogView(logMaintainView: logMaintainView)
+        let logMaintain =  try logMaintainViewModel.getLogDetails()
+        try logMaintainView.displayLogDetails(logMaintain : logMaintain)
     }
 }
 

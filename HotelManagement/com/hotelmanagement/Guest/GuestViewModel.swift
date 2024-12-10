@@ -1,7 +1,7 @@
 class GuestViewModel : GuestViewModelService
 {
     private weak var guestView : GuestViewService?
-    private let guestDataLayer = GuestDataLayer.getInstance()
+    private let guestDataLayer = GuestDataLayer()
     func setGuestView(guestView: GuestViewService)
     {
         self.guestView = guestView
@@ -64,6 +64,19 @@ class GuestViewModel : GuestViewModelService
     func getGuestData() throws -> [Guest]
     {
         return try guestDataLayer.getGuest()
+    }
+    func getGuest(username : String , password : String) throws  -> Result<Guest, DatabaseError>
+    {
+        let guest = try guestDataLayer.getGuest(username : username , password : password)
+        if guest.isEmpty
+        {
+            throw DatabaseError.noRecordFound(msg : "Username or password is wrong")
+        }
+        return .success(guest.first!)
+    }
+    func isAvailableUserName (username: String) throws -> Bool
+    {
+        return  try guestDataLayer.isAvailableUserName (username: username)
     }
 }
  

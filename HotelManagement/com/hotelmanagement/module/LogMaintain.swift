@@ -1,5 +1,5 @@
 import Foundation
-struct LogMaintain
+struct LogMaintain : CustomStringConvertible
 {
     private let bookingId : Int
     private var checkIn   : Date
@@ -36,5 +36,15 @@ struct LogMaintain
     mutating func setCheckOut(_ checkOut : Date)
     {
         self.checkOut = checkOut
+    }
+     var description : String
+    {
+        let checkIn = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss  a",date: checkIn) ?? ""
+        var checkout = "Checkout has not been completed yet"
+        if checkOut != nil
+        {
+            checkout =  Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a ",date: checkOut!) ?? ""
+        }
+        return "BookingId : \(bookingIdProperty) \nCheckIn  : \(checkIn) \nCheckOut : \(checkout) "
     }
 }

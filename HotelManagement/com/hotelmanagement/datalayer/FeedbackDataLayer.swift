@@ -1,17 +1,5 @@
 class FeedbackDataLayer
 {
-    private static var  feedbackDataLayer : FeedbackDataLayer? = nil
-    private init()
-    {
-    }
-    public static func getInstance() -> FeedbackDataLayer
-    {
-        if feedbackDataLayer  == nil
-        {
-            feedbackDataLayer = FeedbackDataLayer()
-        }
-        return feedbackDataLayer!
-    }
     func getFeedbackDetails(query : String) throws -> [Feedback]
     {
         var feedbackArray : [Feedback] = []

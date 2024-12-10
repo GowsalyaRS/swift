@@ -2,7 +2,6 @@ import SQLite3
 import Foundation
 struct DataAccess : DatabaseUtility
 {
-    
     static var object : DatabaseUtility.Type? = nil
     static func  injectDatabase (using databaseUtility: DatabaseUtility.Type)
     {

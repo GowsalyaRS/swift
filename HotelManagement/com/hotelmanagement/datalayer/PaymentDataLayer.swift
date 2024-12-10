@@ -1,17 +1,5 @@
 class PaymentDataLayer
 {
-    private static var  paymentDataLayer : PaymentDataLayer? = nil
-    private init()
-    {
-    }
-    public static func getInstance() -> PaymentDataLayer
-    {
-        if paymentDataLayer == nil
-        {
-            paymentDataLayer = PaymentDataLayer()
-        }
-        return paymentDataLayer!
-    }
     public func insertPaymentdata(payment : Payment) throws
     {
         let paymentInsertQuery  = """
@@ -23,11 +11,10 @@ class PaymentDataLayer
                      """
         try DataAccess.insertRecord(query: paymentInsertQuery)
     }
-    public func getPaymentData() throws -> [Int:Payment]
+    public func  getPaymentData(query : String) throws -> [Int: Payment]
     {
-        let query = "select * from payment"
         let payments = try DataAccess.executeQueryData(query: query)
-        var paymentData : [Int:Payment] = [:]
+        var paymentData : [Int :Payment] = [:]
         for payment in payments
         {
             if let bookingId = payment["bookingId"] as? Int,
@@ -41,6 +28,11 @@ class PaymentDataLayer
             }
         }
         return paymentData
+    }
+    public func getPaymentData() throws -> [Int : Payment]
+    {
+        let query = "select * from payment"
+        return try getPaymentData(query: query)
     }
     public func updatePaymentStatus (payment: Payment) throws
     {

@@ -2,8 +2,7 @@ import Foundation
 class BookingViewModel : BookingViewModelService
 {
     private weak var bookingView : BookingViewService?
-    private let bookingDataLayer =  BookingDataLayer.getInstance()
-    private let paymentDataLayer = PaymentDataLayer.getInstance()
+    private let bookingDataLayer =  BookingDataLayer()
     func setBookingView(bookingView: BookingViewService)
     {
         self.bookingView = bookingView
@@ -82,18 +81,8 @@ class BookingViewModel : BookingViewModelService
         try bookingDataLayer.getUpdateBookingStatus(booking : booking)
         let roomCancellation = RoomCancellation (bookingId: booking.bookingIdProperty, cancellationReason: cancellationReason)
         try bookingDataLayer.insertCancelRoomRecord(roomCancellation: roomCancellation, booking : booking)
-       if var payment  = try PaymentDataLayer.getInstance().getPaymentBooking(bookingId: booking.bookingIdProperty)
-        {
-           if payment.paymentStatusProperty == PaymentStatus.Success
-           {
-               payment.setPaymentStatus(PaymentStatus.Refunded)
-           }
-           else
-           {
-               payment.setPaymentStatus(PaymentStatus.No_Paid)
-           }
-           try paymentDataLayer.updatePaymentStatus (payment: payment)
-       }
+        let paymentViewModel = PaymentViewModel()
+        try paymentViewModel.updateBookingStatus(bookingId : booking.bookingIdProperty)
     }
     func checkBooking(bookingId: Int) throws -> (Bool,RoomBooking?)
     {
@@ -116,31 +105,24 @@ class BookingViewModel : BookingViewModelService
     {
         booking.bookingStatusProperty = BookingStatus.checkin
         try bookingDataLayer.getUpdateBookingStatus(booking : booking)
-        let payments = try paymentDataLayer.getPaymentData()
-        var payment = payments[booking.bookingIdProperty]
-        if payment != nil && payment!.paymentStatusProperty == PaymentStatus.Pending
-        {
-            payment?.setPaymentStatus(PaymentStatus.Success)
-            try paymentDataLayer.updatePaymentStatus(payment: payment!)
-        }
-        var hotelRoom =  try RoomDataLayer.getInstance().getRoomNumber(roomNumber: booking.roomNumberProperty)!
-        hotelRoom.changeAvailability(false)
-        try RoomDataLayer.getInstance().updateHotelRoomData(hotelRoom: hotelRoom)
-        let login =  LogMaintain(bookingId : booking.bookingIdProperty , checkIn : Date())
-        try LoginDataLayer.getInstance().insertLoginData(loginData : login)
+        let paymentViewModel = PaymentViewModel()
+        let payment = try paymentViewModel.getPayementDetails(bookingId: booking.bookingIdProperty)
+        try paymentViewModel.updateBookingStatus(payment: payment!)
+        let roomViewModel = RoomViewModel()
+        try roomViewModel.updateRoomStatus(roomNumber : booking.roomNumberProperty,roomStatus : false)
+        let logViewModel = LogMaintainViewModel()
+        try logViewModel.addLoginData(booking : booking)
     }
     func setCheckoutDetails(booking : RoomBooking) throws
     {
-        let loginDataLayer = LoginDataLayer.getInstance()
         booking.bookingStatusProperty = BookingStatus.checkout
         try bookingDataLayer.getUpdateBookingStatus(booking : booking)
-        var hotelRoom =  try RoomDataLayer.getInstance().getRoomNumber(roomNumber: booking.roomNumberProperty)!
-        hotelRoom.changeAvailability(true)
-        try RoomDataLayer.getInstance().updateHotelRoomData(hotelRoom: hotelRoom)
-        if  var login = try loginDataLayer.getLoginData(bookingId : booking.bookingIdProperty)
+        let roomViewModel = RoomViewModel()
+        try roomViewModel.updateRoomStatus(roomNumber : booking.roomNumberProperty,roomStatus : true)
+        let logViewModel = LogMaintainViewModel()
+        if  let login = try logViewModel.getLoginData(bookingId : booking.bookingIdProperty)
         {
-            login.setCheckOut(Date())
-            try loginDataLayer.updateLoginData(loginData : login)
+            try logViewModel.updateCheckOutDate(login : login)
         }
     }
     func isAvailableCheckOut(bookingId : Int) throws-> (Bool,RoomBooking?)
@@ -151,5 +133,9 @@ class BookingViewModel : BookingViewModelService
             return (true,bookings.first!)
         }
         return (false,nil)
+    }
+    func getStatusBookings(bookingStatus:  BookingStatus, roomNumber : Int) throws -> [RoomBooking]
+    {
+        return try  bookingDataLayer.getStatusBookings(bookingStatus: bookingStatus, roomNumber : roomNumber)
     }
 }

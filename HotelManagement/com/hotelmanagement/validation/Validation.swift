@@ -89,8 +89,8 @@ struct  Validation
         let username = name.replacingOccurrences(of: "'", with: "")
         do
         {
-            let matchingAuthendication = try GuestDataLayer.getInstance().getAuthendicationData().filter({$0.usernameProperty == username})
-            return (matchingAuthendication.isEmpty)
+            let guestViewModel = GuestViewModel()
+            return try guestViewModel.isAvailableUserName ( username: username)
         }
         catch
         {

@@ -228,7 +228,7 @@ struct  Helper
     }
     func addAdminData() throws
     {
-        let guestDataLayer = GuestDataLayer.getInstance()
+        let guestDataLayer = GuestDataLayer()
         var guest = Guest (name: "Yugan", phoneNo: 9876543210, address: "KK Nagar Madurai.")
         guest.roleProperty = .Admin
         let authendication = GuestAuthentication(guestId: guest.guestIdProperty,  username: "zoho", password: "123")

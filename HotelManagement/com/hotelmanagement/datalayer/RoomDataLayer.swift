@@ -1,17 +1,5 @@
 class RoomDataLayer
 {
-    private static var roomDataLayer : RoomDataLayer? = nil
-    private init()
-    {
-    }
-    public static func getInstance() -> RoomDataLayer
-    {
-        if roomDataLayer == nil
-        {
-            roomDataLayer = RoomDataLayer()
-        }
-        return roomDataLayer!
-    }
     func insertRoomStructure(room: Room) throws
     {
         let amenitie : String = room.amenitiesProperty.joined(separator: ",")
@@ -109,6 +97,15 @@ class RoomDataLayer
                              where roomId = \(roomId)
                              """
         return try getHotelRoomDetails(query : hotelRoomQuery)
+    }
+    func getRoomData (roomNumber : Int ) throws -> [Room]
+    {
+        let roomQuery  =  """
+                            SELECT * FROM rooms WHERE roomId IN (
+                            SELECT roomId FROM hotel_rooms WHERE roomNumber = \(roomNumber)
+                           );
+                          """
+        return try getRoomDetails(query: roomQuery)
     }
 }
 

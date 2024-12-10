@@ -2,7 +2,7 @@ import Foundation
 class FeedbackViewModel : FeedbackViewModelService
 {
     private weak var feedbackView  : FeedbackViewService?
-    private var feedbackDataLayer   = FeedbackDataLayer.getInstance()
+    private var feedbackDataLayer   = FeedbackDataLayer()
     func setFeedbackView(_ feedbackView: FeedbackViewService)
     {
         self.feedbackView  = feedbackView

@@ -1,17 +1,5 @@
 class LoginDataLayer
 {
-    private static var loginDataLayer : LoginDataLayer? = nil
-    private init()
-    {
-    }
-    public static func getInstance() -> LoginDataLayer
-    {
-        if loginDataLayer == nil
-        {
-            loginDataLayer = LoginDataLayer()
-        }
-        return loginDataLayer!
-    }
     public func insertLoginData(loginData: LogMaintain) throws
     {
         let currentDate = Validation.convertDateToString(formate:"dd-MM-yyyy hh:mm:ss a",date: loginData.checkInProperty)
@@ -39,5 +27,27 @@ class LoginDataLayer
             }
         }
         return nil
+    }
+    public func getLoginData () throws -> [LogMaintain]
+    {
+        let  loginQuery = "select * from login"
+        let logins = try DataAccess.executeQueryData(query: loginQuery)
+        var logMaintains : [LogMaintain]  = []
+        for  login in logins
+        {
+            let bookingId = login["bookingId"] as! Int
+            let checkIndate = login["checkIn"] as! String
+            if let checkIn = Validation.convertStringToDate(formate: "dd-MM-yyyy hh:mm:ss a", date:checkIndate)
+            {
+                var loginMaintain =  LogMaintain(bookingId : bookingId, checkIn : checkIn)
+                if let checkOutdate = login["checkOut"] as? String,
+                let checkOut = Validation.convertStringToDate(formate: "dd-MM-yyyy hh:mm:ss a", date: checkOutdate)
+                {
+                    loginMaintain.setCheckOut(checkOut)
+                }
+                logMaintains.append(loginMaintain)
+            }
+        }
+        return logMaintains
     }
 }

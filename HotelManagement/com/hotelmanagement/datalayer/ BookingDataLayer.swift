@@ -1,18 +1,6 @@
 import Foundation
 class BookingDataLayer
 {
-    private static var bookingDataLayer :BookingDataLayer? = nil
-    private init()
-    {
-    }
-    public static func getInstance() -> BookingDataLayer
-    {
-        if bookingDataLayer == nil
-        {
-            bookingDataLayer = BookingDataLayer()
-        }
-        return bookingDataLayer!
-    }
     func insertBookingData (booking : RoomBooking) throws
     {
         let dates = booking.roomBookingDateProperty

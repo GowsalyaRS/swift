@@ -1,3 +1,4 @@
+import Foundation
 public class LoginViewModel : LoginViewModelService
 {
      private weak var  loginView : LoginViewService?
@@ -7,28 +8,22 @@ public class LoginViewModel : LoginViewModelService
      }
      func checkValidation(name: String, password: String) throws
      {
-         let guestDataLayer = GuestDataLayer.getInstance()
-             if let guestId = try guestDataLayer.getAuthendicationData().first(where: { $0.usernameProperty == name && $0.passwordProperty == password })?.guestIdProperty
-           {
-                 if let guest = try guestDataLayer.getGuest().first(where: { $0.guestIdProperty == guestId })
-                 {
-                     if guest.roleProperty == .Guest
-                     {
-                         loginView?.onGuestSuccess(guest: guest)
-                     }
-                     else
-                     {
-                         loginView?.onAdminSuccess(guest: guest)
-                     }
-                 }
-                 else
-                 {
-                     throw DatabaseError.noRecordFound(msg: "Guest not found")
-                 }
+         let guestViewModel = GuestViewModel()
+         let guest = try guestViewModel.getGuest(username: name, password: password)
+         switch guest
+         {
+             case .success (let guest):
+             if guest.roleProperty == .Guest
+             {
+                 loginView?.onGuestSuccess(guest: guest)
              }
              else
              {
-                 throw DatabaseError.executionFailed(msg: "Invalid Username or Password")
+                 loginView?.onAdminSuccess(guest: guest)
              }
-      }
+             break
+             case .failure(let error):
+             throw error
+         }
+    }
 }

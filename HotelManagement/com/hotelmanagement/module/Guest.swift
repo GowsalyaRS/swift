@@ -55,7 +55,8 @@ struct Guest :  CustomStringConvertible
                   ------------------------------
                    Name      : \(name), 
                    Phone No  : \(phoneNo), 
-                   Address   : \(address)
+                   Address   : \(address),
+                   Role      : \(role)
                   ------------------------------
                """
     }

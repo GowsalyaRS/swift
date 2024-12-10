@@ -1,18 +1,16 @@
 class PaymentViewModel : PaymentViewModelService, PaymentDelegation
 {
     private weak var paymentView : PaymentViewService?
-    let paymentDataLayer = PaymentDataLayer.getInstance()
+    let paymentDataLayer = PaymentDataLayer()
     func setPaymentView(paymentView: PaymentViewService)
     {
         self.paymentView = paymentView
     }
     func calculateAmount(booking : RoomBooking) throws -> Float
     {
-        let roomDataLayer = RoomDataLayer.getInstance()
-        let hotelRoom =  try roomDataLayer.getHotelRoomData().filter { $0.roomNumberProperty == booking.roomNumberProperty }
-        let roomId  = hotelRoom.first?.roomIdProperty ?? 0
-        let room = try roomDataLayer.getRoomData().filter { $0.roomIdProperty == roomId }
-        let amount = room.first?.priceProperty ?? 0
+        let  roomViewModel =  RoomViewModel()
+        let room =   try  roomViewModel.getRoomData(roomNumber : booking.roomNumberProperty);
+        let amount = room?.priceProperty ?? 0
         if amount != 0
         {
             return  ((amount*0.05) + amount) * Float(booking.stayingDaysProperty)
@@ -27,6 +25,10 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
     func getPayementDetails() throws -> [Int : Payment]
     {
         return try paymentDataLayer.getPaymentData()
+    }
+    func getPayementDetails(bookingId : Int) throws -> Payment?
+    {
+        return try paymentDataLayer.getPaymentBooking(bookingId: bookingId)
     }
     func isPaymentChecking(roomBooking: RoomBooking) throws -> Bool
     {
@@ -46,6 +48,30 @@ class PaymentViewModel : PaymentViewModelService, PaymentDelegation
             return  payment.totalAmountProperty
         }
         return  0.0
+    }
+    func updateBookingStatus(bookingId : Int) throws
+    {
+        if var payment  = try paymentDataLayer.getPaymentBooking(bookingId: bookingId)
+         {
+            if payment.paymentStatusProperty == PaymentStatus.Success
+            {
+                payment.setPaymentStatus(PaymentStatus.Refunded)
+            }
+            else
+            {
+                payment.setPaymentStatus(PaymentStatus.No_Paid)
+            }
+            try paymentDataLayer.updatePaymentStatus (payment: payment)
+        }
+    }
+    func updateBookingStatus(payment: Payment) throws
+    {
+        var payment = payment
+        if payment.paymentStatusProperty == PaymentStatus.Pending
+        {
+            payment.setPaymentStatus(PaymentStatus.Success)
+            try paymentDataLayer.updatePaymentStatus(payment: payment)
+        }
     }
 }
  
